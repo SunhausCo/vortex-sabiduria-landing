@@ -34,30 +34,38 @@
   --color-lavender: var(--lavender);
   --color-peach: var(--peach);
   --color-mystic: var(--mystic);
+  --color-plum: var(--plum);
 
-  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
-  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
-  --radius: 1rem;
+  --radius: 1.25rem;
 
-  /* Warm mystical palette */
-  --background: oklch(0.985 0.012 20);         /* off-white cream */
-  --foreground: oklch(0.28 0.06 300);          /* deep plum */
+  /* Mystic modern palette — 6 core tokens */
+  --plum: oklch(0.28 0.09 305);       /* deep purple */
+  --mystic: oklch(0.45 0.16 300);     /* mystic purple */
+  --lavender: oklch(0.78 0.09 310);   /* soft lavender */
+  --blush: oklch(0.86 0.07 340);      /* rosy blush */
+  --peach: oklch(0.83 0.11 40);       /* peach coral */
+  --cream: oklch(0.985 0.012 60);     /* warm off-white */
+
+  --background: var(--cream);
+  --foreground: var(--plum);
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.28 0.06 300);
+  --card-foreground: var(--plum);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.28 0.06 300);
+  --popover-foreground: var(--plum);
 
-  --primary: oklch(0.55 0.14 305);             /* mystical purple */
-  --primary-foreground: oklch(0.99 0.005 40);
-  --secondary: oklch(0.88 0.06 340);           /* soft lavender-pink */
-  --secondary-foreground: oklch(0.32 0.08 305);
+  --primary: var(--mystic);
+  --primary-foreground: oklch(0.99 0.005 60);
+  --secondary: oklch(0.92 0.05 320);
+  --secondary-foreground: var(--plum);
   --muted: oklch(0.96 0.02 320);
   --muted-foreground: oklch(0.5 0.05 305);
-  --accent: oklch(0.82 0.11 40);               /* peach coral */
+  --accent: var(--peach);
   --accent-foreground: oklch(0.3 0.08 30);
   --destructive: oklch(0.62 0.22 25);
   --destructive-foreground: oklch(0.99 0 0);
@@ -65,35 +73,18 @@
   --input: oklch(0.92 0.02 320);
   --ring: oklch(0.65 0.14 310);
 
-  --lavender: oklch(0.78 0.09 310);
-  --peach: oklch(0.85 0.1 40);
-  --mystic: oklch(0.45 0.15 300);
+  --gradient-hero: linear-gradient(135deg, oklch(0.32 0.11 300), oklch(0.55 0.16 320) 45%, oklch(0.85 0.1 40));
+  --gradient-cta: linear-gradient(135deg, var(--mystic), oklch(0.68 0.15 340) 55%, var(--peach));
+  --gradient-text: linear-gradient(90deg, var(--mystic), oklch(0.68 0.14 340), var(--peach));
+  --gradient-border: linear-gradient(135deg, var(--mystic), var(--peach));
 
-  --gradient-hero: linear-gradient(135deg, oklch(0.9 0.06 310) 0%, oklch(0.92 0.05 340) 45%, oklch(0.9 0.08 40) 100%);
-  --gradient-soft: linear-gradient(180deg, oklch(0.98 0.015 320) 0%, oklch(0.96 0.03 340) 100%);
-  --gradient-cta: linear-gradient(135deg, oklch(0.55 0.14 305) 0%, oklch(0.7 0.13 340) 60%, oklch(0.82 0.11 40) 100%);
-  --gradient-text: linear-gradient(90deg, oklch(0.45 0.15 300), oklch(0.68 0.14 340), oklch(0.72 0.13 40));
-
-  --shadow-soft: 0 10px 40px -12px oklch(0.55 0.14 305 / 0.25);
-  --shadow-glow: 0 0 60px oklch(0.78 0.1 340 / 0.35);
-
-  --sidebar: oklch(0.98 0.01 320);
-  --sidebar-foreground: oklch(0.28 0.06 300);
-  --sidebar-primary: oklch(0.55 0.14 305);
-  --sidebar-primary-foreground: oklch(0.99 0 0);
-  --sidebar-accent: oklch(0.92 0.04 320);
-  --sidebar-accent-foreground: oklch(0.3 0.08 305);
-  --sidebar-border: oklch(0.9 0.03 320);
-  --sidebar-ring: oklch(0.65 0.14 310);
+  --shadow-soft: 0 20px 50px -20px oklch(0.35 0.15 305 / 0.35);
+  --shadow-glow: 0 0 80px oklch(0.78 0.1 340 / 0.45);
 }
 
 @layer base {
-  * {
-    border-color: var(--color-border);
-  }
-  html {
-    scroll-behavior: smooth;
-  }
+  * { border-color: var(--color-border); }
+  html { scroll-behavior: smooth; }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -102,65 +93,112 @@
   }
   h1, h2, h3, h4 {
     font-family: var(--font-serif);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
+    font-weight: 500;
   }
+  ::selection { background: var(--peach); color: var(--plum); }
 }
 
+/* -------- Utilities -------- */
 @utility text-gradient {
   background: var(--gradient-text);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
+@utility bg-cta { background: var(--gradient-cta); }
+@utility shadow-soft { box-shadow: var(--shadow-soft); }
+@utility shadow-glow { box-shadow: var(--shadow-glow); }
 
-@utility bg-hero {
-  background: var(--gradient-hero);
+@utility glass {
+  background: color-mix(in oklch, white 55%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid color-mix(in oklch, white 65%, transparent);
+}
+@utility glass-dark {
+  background: color-mix(in oklch, var(--plum) 25%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid color-mix(in oklch, white 20%, transparent);
 }
 
-@utility bg-soft {
-  background: var(--gradient-soft);
+@utility gradient-border {
+  position: relative;
+  background: var(--card);
+  border-radius: 2rem;
+}
+@utility gradient-border-inner {
+  padding: 2px;
+  border-radius: 2rem;
+  background: linear-gradient(135deg, var(--mystic), var(--peach), var(--lavender), var(--mystic));
+  background-size: 300% 300%;
+  animation: borderShift 8s ease infinite;
 }
 
-@utility bg-cta {
-  background: var(--gradient-cta);
-}
-
-@utility shadow-soft {
-  box-shadow: var(--shadow-soft);
-}
-
-@utility shadow-glow {
-  box-shadow: var(--shadow-glow);
-}
-
+/* -------- Keyframes -------- */
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+@keyframes breathe {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 40px oklch(0.78 0.1 340 / 0.35); }
+  50% { transform: scale(1.04); box-shadow: 0 0 80px oklch(0.83 0.11 40 / 0.55); }
 }
-@keyframes spin-slow {
-  to { transform: rotate(360deg); }
+@keyframes float-blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(60px, -40px) scale(1.15); }
+  66% { transform: translate(-40px, 50px) scale(0.9); }
+}
+@keyframes float-blob-alt {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-80px, 60px) scale(1.2); }
+}
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+@keyframes borderShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(10px); opacity: 1; }
+}
+@keyframes drift {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  10% { opacity: 0.7; }
+  100% { transform: translateY(-120vh) translateX(40px); opacity: 0; }
+}
+@keyframes gradient-move {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
-@utility animate-fade-up {
-  animation: fade-up 0.8s ease-out both;
-}
-@utility animate-float {
-  animation: float-slow 6s ease-in-out infinite;
-}
-@utility animate-spin-slow {
-  animation: spin-slow 40s linear infinite;
-}
+@utility animate-fade-up { animation: fade-up 0.9s ease-out both; }
+@utility animate-breathe { animation: breathe 5s ease-in-out infinite; }
+@utility animate-float-blob { animation: float-blob 18s ease-in-out infinite; }
+@utility animate-float-blob-alt { animation: float-blob-alt 22s ease-in-out infinite; }
+@utility animate-spin-slow { animation: spin-slow 60s linear infinite; }
+@utility animate-bounce-soft { animation: bounce-soft 2s ease-in-out infinite; }
+@utility animate-gradient { animation: gradient-move 12s ease infinite; background-size: 200% 200%; }
 
+/* Scroll reveal */
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.9s ease-out, transform 0.9s ease-out;
+  transform: translateY(28px);
+  transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
 }
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Particles */
+.particle {
+  position: absolute;
+  bottom: -20px;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--lavender) 70%, white);
+  filter: blur(1px);
+  animation: drift linear infinite;
 }
