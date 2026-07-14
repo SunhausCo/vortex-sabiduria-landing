@@ -27,8 +27,7 @@ export const Route = createFileRoute("/")({
 });
 
 const WHATSAPP_NUMBER = "573508623461";
-const WHATSAPP_LINK = `https://wa.me/${
-  }?text=${encodeURIComponent(
+const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
   "Hola Stella, me gustaría agendar una sesión en Vortex de Sabiduría 🌙",
 )}`;
 

@@ -9,8 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PausaParaElAlmaRouteImport } from './routes/pausa-para-el-alma'
 import { Route as IndexRouteImport } from './routes/index'
 
+const PausaParaElAlmaRoute = PausaParaElAlmaRouteImport.update({
+  id: '/pausa-para-el-alma',
+  path: '/pausa-para-el-alma',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +25,39 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pausa-para-el-alma': typeof PausaParaElAlmaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pausa-para-el-alma': typeof PausaParaElAlmaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/pausa-para-el-alma': typeof PausaParaElAlmaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/pausa-para-el-alma'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/pausa-para-el-alma'
+  id: '__root__' | '/' | '/pausa-para-el-alma'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PausaParaElAlmaRoute: typeof PausaParaElAlmaRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/pausa-para-el-alma': {
+      id: '/pausa-para-el-alma'
+      path: '/pausa-para-el-alma'
+      fullPath: '/pausa-para-el-alma'
+      preLoaderRoute: typeof PausaParaElAlmaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +70,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PausaParaElAlmaRoute: PausaParaElAlmaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
