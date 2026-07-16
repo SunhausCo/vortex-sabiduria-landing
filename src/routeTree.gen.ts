@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PausaParaElAlmaRouteImport } from './routes/pausa-para-el-alma'
+import { Route as DescargablesRouteImport } from './routes/descargables'
 import { Route as IndexRouteImport } from './routes/index'
 
 const PausaParaElAlmaRoute = PausaParaElAlmaRouteImport.update({
   id: '/pausa-para-el-alma',
   path: '/pausa-para-el-alma',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DescargablesRoute = DescargablesRouteImport.update({
+  id: '/descargables',
+  path: '/descargables',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,27 +31,31 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/descargables': typeof DescargablesRoute
   '/pausa-para-el-alma': typeof PausaParaElAlmaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/descargables': typeof DescargablesRoute
   '/pausa-para-el-alma': typeof PausaParaElAlmaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/descargables': typeof DescargablesRoute
   '/pausa-para-el-alma': typeof PausaParaElAlmaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/pausa-para-el-alma'
+  fullPaths: '/' | '/descargables' | '/pausa-para-el-alma'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/pausa-para-el-alma'
-  id: '__root__' | '/' | '/pausa-para-el-alma'
+  to: '/' | '/descargables' | '/pausa-para-el-alma'
+  id: '__root__' | '/' | '/descargables' | '/pausa-para-el-alma'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DescargablesRoute: typeof DescargablesRoute
   PausaParaElAlmaRoute: typeof PausaParaElAlmaRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/pausa-para-el-alma'
       fullPath: '/pausa-para-el-alma'
       preLoaderRoute: typeof PausaParaElAlmaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/descargables': {
+      id: '/descargables'
+      path: '/descargables'
+      fullPath: '/descargables'
+      preLoaderRoute: typeof DescargablesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DescargablesRoute: DescargablesRoute,
   PausaParaElAlmaRoute: PausaParaElAlmaRoute,
 }
 export const routeTree = rootRouteImport
