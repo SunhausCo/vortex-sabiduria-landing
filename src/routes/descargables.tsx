@@ -77,7 +77,7 @@ function useReveal() {
 function DescargablesPage() {
   useReveal();
   return (
-    <div className="min-h-screen" style={{ background: "#F5F1EA", color: "#1F1D1A" }}>
+    <div className="min-h-screen" style={{ background: "var(--cream)", color: "var(--plum)" }}>
       <TopBar />
       <Hero />
       <Preview />
@@ -92,13 +92,13 @@ function DescargablesPage() {
 /* ---------- TopBar ---------- */
 function TopBar() {
   return (
-    <header className="sticky top-0 z-40 border-b" style={{ background: "rgba(245,241,234,0.85)", backdropFilter: "blur(14px)", borderColor: "#E8DFD1" }}>
+    <header className="sticky top-0 z-40 border-b" style={{ background: "color-mix(in oklch, var(--cream) 82%, transparent)", backdropFilter: "blur(14px)", borderColor: "var(--border)" }}>
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link to="/" className="flex items-center gap-2 text-sm tracking-[0.3em]" style={{ color: "#5B6A3F" }}>
+        <Link to="/" className="flex items-center gap-2 text-sm tracking-[0.3em]" style={{ color: "var(--mystic)" }}>
           <ArrowLeft className="h-4 w-4" />
           VÓRTEX
         </Link>
-        <span className="text-xs tracking-[0.35em]" style={{ color: "#B08D57" }}>
+        <span className="text-xs tracking-[0.35em]" style={{ color: "var(--peach)" }}>
           RECURSOS · GRATUITOS
         </span>
       </div>
@@ -112,27 +112,27 @@ function Hero() {
     <section className="relative overflow-hidden">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-14 px-6 pb-24 pt-20 md:grid-cols-2 md:gap-20 md:pt-28">
         <div className="reveal flex flex-col justify-center">
-          <span className="mb-6 inline-flex items-center gap-2 text-[11px] tracking-[0.4em]" style={{ color: "#B08D57" }}>
+          <span className="mb-6 inline-flex items-center gap-2 text-[11px] tracking-[0.4em]" style={{ color: "var(--peach)" }}>
             <Leaf className="h-3.5 w-3.5" />
             GUÍA GRATUITA · PDF
           </span>
-          <h1 className="font-serif text-5xl leading-[1.05] md:text-6xl" style={{ color: "#1F1D1A" }}>
-            ¿Por qué repito<br />la misma <em className="italic" style={{ color: "#5B6A3F" }}>historia</em>?
+          <h1 className="font-serif text-5xl leading-[1.05] md:text-6xl" style={{ color: "var(--plum)" }}>
+            ¿Por qué repito<br />la misma <em className="italic" style={{ color: "var(--mystic)" }}>historia</em>?
           </h1>
-          <div className="mt-6 h-px w-16" style={{ background: "#B08D57" }} />
-          <p className="mt-6 max-w-md font-serif text-lg italic leading-relaxed" style={{ color: "#6B655C" }}>
+          <div className="mt-6 h-px w-16" style={{ background: "var(--peach)" }} />
+          <p className="mt-6 max-w-md font-serif text-lg italic leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
             Una guía introductoria para comprender cómo las historias familiares
             pueden influir en tu vida — y en las decisiones que hoy sientes tuyas.
           </p>
 
-          <ul className="mt-8 space-y-3 text-[15px]" style={{ color: "#1F1D1A" }}>
+          <ul className="mt-8 space-y-3 text-[15px]" style={{ color: "var(--plum)" }}>
             {[
               "8 páginas, diseño editorial",
               "Sin tecnicismos ni promesas exageradas",
               "Preguntas para reflexionar tu propia historia",
             ].map((t) => (
               <li key={t} className="flex items-start gap-3">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" style={{ color: "#5B6A3F" }} />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" style={{ color: "var(--mystic)" }} />
                 <span>{t}</span>
               </li>
             ))}
@@ -143,7 +143,7 @@ function Hero() {
               href={PDF_URL}
               download
               className="group inline-flex items-center gap-3 px-8 py-4 text-sm tracking-[0.25em] transition hover:scale-[1.02]"
-              style={{ background: "#1F1D1A", color: "#F5F1EA" }}
+              style={{ background: "var(--plum)", color: "var(--cream)" }}
             >
               <Download className="h-4 w-4 transition group-hover:translate-y-0.5" />
               DESCARGAR GUÍA
@@ -153,20 +153,20 @@ function Hero() {
               target="_blank"
               rel="noopener"
               className="inline-flex items-center gap-2 px-6 py-4 text-sm tracking-[0.2em] transition hover:opacity-70"
-              style={{ color: "#5B6A3F" }}
+              style={{ color: "var(--mystic)" }}
             >
               <BookOpen className="h-4 w-4" />
               VER ANTES
             </a>
           </div>
-          <p className="mt-4 text-xs" style={{ color: "#6B655C" }}>
+          <p className="mt-4 text-xs" style={{ color: "var(--muted-foreground)" }}>
             Formato PDF · 8 páginas · Descarga inmediata · Sin registro
           </p>
         </div>
 
         {/* Image */}
         <div className="reveal relative">
-          <div className="relative aspect-[4/5] overflow-hidden" style={{ background: "#E8DFD1" }}>
+          <div className="relative aspect-[4/5] overflow-hidden" style={{ background: "var(--border)" }}>
             <img
               src={heroImg}
               alt="Guía introductoria a las constelaciones familiares"
@@ -174,12 +174,12 @@ function Hero() {
               height={1104}
               className="h-full w-full object-cover"
             />
-            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-[10px] tracking-[0.35em]" style={{ color: "#F5F1EA" }}>
+            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-[10px] tracking-[0.35em]" style={{ color: "var(--cream)" }}>
               <span>VÓRTEX · DE · SABIDURÍA</span>
               <span>2026</span>
             </div>
           </div>
-          <div className="pointer-events-none absolute -bottom-4 -right-4 h-24 w-24 border" style={{ borderColor: "#B08D57" }} />
+          <div className="pointer-events-none absolute -bottom-4 -right-4 h-24 w-24 border" style={{ borderColor: "var(--peach)" }} />
         </div>
       </div>
     </section>
@@ -195,21 +195,21 @@ function Preview() {
     { icon: BookOpen, label: "04", title: "Qué sucede en sesión", desc: "El paso a paso, para que llegues con calma y sin expectativas." },
   ];
   return (
-    <section className="border-y" style={{ borderColor: "#E8DFD1", background: "#EFE9DE" }}>
+    <section className="border-y" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
       <div className="mx-auto max-w-6xl px-6 py-24">
         <div className="reveal mb-16 max-w-2xl">
-          <span className="text-[11px] tracking-[0.4em]" style={{ color: "#B08D57" }}>LO QUE ENCONTRARÁS</span>
+          <span className="text-[11px] tracking-[0.4em]" style={{ color: "var(--peach)" }}>LO QUE ENCONTRARÁS</span>
           <h2 className="mt-4 font-serif text-4xl md:text-5xl">Un espacio para mirar tu historia con calma.</h2>
         </div>
-        <div className="grid grid-cols-1 gap-px sm:grid-cols-2" style={{ background: "#D9CDB8" }}>
+        <div className="grid grid-cols-1 gap-px sm:grid-cols-2" style={{ background: "var(--secondary)" }}>
           {items.map((it) => (
-            <div key={it.label} className="reveal p-10" style={{ background: "#F5F1EA" }}>
+            <div key={it.label} className="reveal p-10" style={{ background: "var(--cream)" }}>
               <div className="flex items-center justify-between">
-                <it.icon className="h-5 w-5" style={{ color: "#5B6A3F" }} />
-                <span className="text-xs tracking-[0.3em]" style={{ color: "#B08D57" }}>{it.label}</span>
+                <it.icon className="h-5 w-5" style={{ color: "var(--mystic)" }} />
+                <span className="text-xs tracking-[0.3em]" style={{ color: "var(--peach)" }}>{it.label}</span>
               </div>
               <h3 className="mt-8 font-serif text-2xl">{it.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed" style={{ color: "#6B655C" }}>{it.desc}</p>
+              <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--muted-foreground)" }}>{it.desc}</p>
             </div>
           ))}
         </div>
@@ -223,12 +223,12 @@ function Inside() {
   return (
     <section className="mx-auto max-w-4xl px-6 py-28 text-center">
       <div className="reveal">
-        <div className="mx-auto mb-8 h-px w-12" style={{ background: "#B08D57" }} />
-        <p className="font-serif text-2xl italic leading-relaxed md:text-3xl" style={{ color: "#1F1D1A" }}>
+        <div className="mx-auto mb-8 h-px w-12" style={{ background: "var(--peach)" }} />
+        <p className="font-serif text-2xl italic leading-relaxed md:text-3xl" style={{ color: "var(--plum)" }}>
           &ldquo;Lo que no se comprende se repite. Lo que se mira con amor,
           comienza a transformarse.&rdquo;
         </p>
-        <p className="mt-8 text-xs tracking-[0.4em]" style={{ color: "#B08D57" }}>
+        <p className="mt-8 text-xs tracking-[0.4em]" style={{ color: "var(--peach)" }}>
           UN EXTRACTO DE LA GUÍA
         </p>
       </div>
@@ -239,19 +239,19 @@ function Inside() {
 /* ---------- Author ---------- */
 function Author() {
   return (
-    <section className="border-t" style={{ borderColor: "#E8DFD1", background: "#EFE9DE" }}>
+    <section className="border-t" style={{ borderColor: "var(--border)", background: "var(--muted)" }}>
       <div className="mx-auto grid max-w-5xl grid-cols-1 gap-12 px-6 py-24 md:grid-cols-[1fr_2fr] md:items-center">
         <div className="reveal">
-          <div className="relative mx-auto h-48 w-48 overflow-hidden rounded-full" style={{ background: "#D9CDB8" }}>
-            <div className="flex h-full w-full items-center justify-center font-serif text-5xl" style={{ color: "#5B6A3F" }}>
+          <div className="relative mx-auto h-48 w-48 overflow-hidden rounded-full" style={{ background: "var(--secondary)" }}>
+            <div className="flex h-full w-full items-center justify-center font-serif text-5xl" style={{ color: "var(--mystic)" }}>
               S
             </div>
           </div>
         </div>
         <div className="reveal">
-          <span className="text-[11px] tracking-[0.4em]" style={{ color: "#B08D57" }}>SOBRE LA AUTORA</span>
+          <span className="text-[11px] tracking-[0.4em]" style={{ color: "var(--peach)" }}>SOBRE LA AUTORA</span>
           <h2 className="mt-4 font-serif text-3xl md:text-4xl">Stella Cante Molina</h2>
-          <p className="mt-6 leading-relaxed" style={{ color: "#6B655C" }}>
+          <p className="mt-6 leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
             Terapeuta dedicada al acompañamiento sistémico desde hace más de una década.
             Su trabajo se apoya en la escucha, el respeto y la calma — un espacio donde
             cada persona puede reconocer su propia historia y encontrar aire para caminar.
@@ -267,9 +267,9 @@ function FinalCTA() {
   return (
     <section className="mx-auto max-w-4xl px-6 py-28 text-center">
       <div className="reveal">
-        <span className="text-[11px] tracking-[0.4em]" style={{ color: "#B08D57" }}>SIGUIENTE PASO</span>
+        <span className="text-[11px] tracking-[0.4em]" style={{ color: "var(--peach)" }}>SIGUIENTE PASO</span>
         <h2 className="mt-4 font-serif text-4xl md:text-5xl">¿Deseas profundizar?</h2>
-        <p className="mx-auto mt-6 max-w-xl leading-relaxed" style={{ color: "#6B655C" }}>
+        <p className="mx-auto mt-6 max-w-xl leading-relaxed" style={{ color: "var(--muted-foreground)" }}>
           Si al leer la guía sientes que algo se movió dentro tuyo, será un gusto
           acompañarte en una sesión personal.
         </p>
@@ -278,7 +278,7 @@ function FinalCTA() {
             href={PDF_URL}
             download
             className="inline-flex items-center gap-3 px-8 py-4 text-sm tracking-[0.25em] transition hover:scale-[1.02]"
-            style={{ background: "#1F1D1A", color: "#F5F1EA" }}
+            style={{ background: "var(--plum)", color: "var(--cream)" }}
           >
             <Download className="h-4 w-4" />
             DESCARGAR GUÍA
@@ -288,7 +288,7 @@ function FinalCTA() {
             target="_blank"
             rel="noopener"
             className="inline-flex items-center gap-3 border px-8 py-4 text-sm tracking-[0.25em] transition hover:opacity-70"
-            style={{ borderColor: "#1F1D1A", color: "#1F1D1A" }}
+            style={{ borderColor: "var(--plum)", color: "var(--plum)" }}
           >
             <MessageCircle className="h-4 w-4" />
             AGENDAR SESIÓN
@@ -302,8 +302,8 @@ function FinalCTA() {
 /* ---------- Footer ---------- */
 function FooterBar() {
   return (
-    <footer className="border-t" style={{ borderColor: "#E8DFD1" }}>
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-xs md:flex-row" style={{ color: "#6B655C" }}>
+    <footer className="border-t" style={{ borderColor: "var(--border)" }}>
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-xs md:flex-row" style={{ color: "var(--muted-foreground)" }}>
         <span className="tracking-[0.3em]">VÓRTEX · DE · SABIDURÍA</span>
         <span>© 2026 · Stella Cante Molina · Bogotá</span>
         <Link to="/" className="tracking-[0.3em] hover:opacity-70">← VOLVER AL INICIO</Link>
