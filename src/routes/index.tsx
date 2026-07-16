@@ -615,6 +615,14 @@ function Footer() {
           ))}
         </div>
 
+        <Link
+          to="/descargables"
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs tracking-[0.25em] text-primary transition hover:bg-cta hover:text-white"
+        >
+          <Download className="h-3.5 w-3.5" />
+          GUÍA GRATUITA
+        </Link>
+
         <p className="text-xs text-muted-foreground">
           © {new Date().getFullYear()} Stella Cante Molina
         </p>
