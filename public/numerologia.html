@@ -16,11 +16,10 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html{background:var(--bg); min-height:100%}
-body::after{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; background:var(--bg-grad)}
+html{background-color:#b8668e; background-image:var(--bg-grad); background-repeat:no-repeat; background-size:100% 100%; min-height:100lvh}
 body{
   background:transparent; color:var(--fg); font-family:var(--font-body); font-weight:300;
-  font-size:17px; line-height:1.65; min-height:100dvh; position:relative; overflow-x:clip;
+  font-size:17px; line-height:1.65; min-height:100lvh; position:relative; overflow-x:clip;
   padding-block:28px 64px;
   padding-left:max(16px, env(safe-area-inset-left, 0px));
   padding-right:max(16px, env(safe-area-inset-right, 0px));
