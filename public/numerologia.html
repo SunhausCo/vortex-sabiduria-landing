@@ -1,0 +1,862 @@
+<title>Tu Código Numérico</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap">
+<style>
+/* Layout: columna estrecha. Un escenario con cielo violeta animado (canvas) y una escena por frase; debajo, subtítulos palabra por palabra con tu nombre resaltado. Un solo tema a propósito. */
+:root{
+  --bg:#4a2a80;
+  --bg-grad:linear-gradient(165deg,#3b2168 0%,#6e3a92 38%,#9a5090 72%,#b8668e 100%);
+  --glass:rgba(34,16,72,.52); --glass-2:rgba(34,16,72,.66); --fg:#ffffff; --muted:rgba(255,255,255,.8);
+  --accent:#ffd9c2; --rose:#ff9fd6; --line:rgba(255,255,255,.28); --medal:rgba(255,255,255,.16); --danger:#ffc2b8;
+  --btn-grad:linear-gradient(100deg,#5b3796 0%,#b0589c 58%,#c9707e 100%);
+  --font-display:"Playfair Display",Georgia,"Times New Roman",serif;
+  --font-body:"Jost",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--bg); min-height:100%}
+body::after{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; background:var(--bg-grad)}
+body{
+  background:transparent; color:var(--fg); font-family:var(--font-body); font-weight:300;
+  font-size:17px; line-height:1.65; min-height:100dvh; position:relative; overflow-x:clip;
+  padding-block:28px 64px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+body::before{
+  content:""; position:fixed; z-index:0; pointer-events:none; left:50%; top:10vh; width:150vw; max-width:1100px; aspect-ratio:1;
+  transform:translateX(-50%); border-radius:50%; border:1px solid rgba(255,255,255,.14);
+  outline:1px solid rgba(255,255,255,.09); outline-offset:-110px;
+}
+.wrap{width:100%; max-width:560px; margin:0 auto; display:flex; flex-direction:column; gap:22px; position:relative; z-index:1}
+h1,h2,h3{font-family:var(--font-display); font-weight:400; line-height:1.12; margin:0; text-wrap:balance}
+h1{font-size:clamp(2.3rem,10vw,3.4rem)}
+h1 em,h2 em{font-style:italic}
+h2{font-size:2rem}
+h3{font-size:1.45rem}
+p{margin:0}
+.eyebrow{font-size:.74rem; letter-spacing:.3em; text-transform:uppercase; color:var(--muted); font-weight:400}
+.muted{color:var(--muted)}
+.center{text-align:center}
+.btn{
+  font:inherit; font-weight:500; border:0; cursor:pointer; background:var(--btn-grad); color:#fff;
+  padding:17px 26px; border-radius:999px; width:100%; font-size:1.05rem; text-align:center; text-decoration:none; display:block;
+  box-shadow:0 10px 30px rgba(30,10,60,.3);
+}
+.btn.ghost{background:rgba(255,255,255,.18); color:#fff; border:1px solid var(--line); box-shadow:none}
+.btn:focus-visible,input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid #fff; outline-offset:3px}
+
+/* Entrada */
+.hero{display:flex; flex-direction:column; gap:16px; padding-top:6px; align-items:flex-start}
+.ring{
+  width:96px; height:96px; border-radius:50%; border:1px solid rgba(255,255,255,.55); background:var(--medal); display:grid; place-items:center;
+  font-family:var(--font-display); font-size:2.6rem; color:#fff; position:relative; flex:none;
+}
+.ring::after{content:""; position:absolute; inset:6px; border-radius:50%; border:1px dotted rgba(255,255,255,.4)}
+.ring.sm{width:62px; height:62px; font-size:1.7rem}
+.ring.sm::after{inset:4px}
+.ring.lock{background:transparent; border-color:var(--line); color:var(--muted); font-family:var(--font-body); font-size:1.1rem}
+.ring.lock::after{display:none}
+.chips{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:8px 16px; font-size:.9rem}
+.chips li{display:flex; align-items:center; gap:8px}
+.chips li::before{content:"✓"; width:20px; height:20px; border-radius:50%; background:var(--accent); color:#3b2168; display:grid; place-items:center; font-size:.72rem; font-weight:500}
+.form{display:flex; flex-direction:column; gap:16px; background:var(--glass); border:1px solid var(--line); border-radius:24px; padding:22px; width:100%;}
+label{font-size:.82rem; letter-spacing:.14em; text-transform:uppercase; font-weight:400; display:block; margin-bottom:8px; color:var(--muted)}
+input,select{
+  width:100%; font:inherit; font-weight:400; color:#fff; background:rgba(255,255,255,.12); border:1px solid var(--line);
+  border-radius:14px; padding:13px 16px; min-height:50px;
+}
+input::placeholder{color:rgba(255,255,255,.55)}
+.dates{display:grid; grid-template-columns:.8fr 1.5fr 1fr; gap:10px}
+.dates input{text-align:center; min-width:0}
+select:disabled{opacity:.5}
+select option{color:#1c1733; background:#fff}
+.err{color:var(--danger); font-size:.88rem; min-height:1.2em}
+.note{font-size:.8rem; color:var(--muted)}
+
+/* Escenario */
+.stage{
+  contain:layout paint; position:relative; width:100%; aspect-ratio:1/1.02;
+  background:radial-gradient(62% 48% at 50% 46%, rgba(220,140,230,.34), transparent 72%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 14%,#000 86%,transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0,#000 14%,#000 86%,transparent 100%);
+}
+#sky{position:absolute; inset:0; width:100%; height:100%; display:block}
+.orbits{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+.orbits circle{fill:none; stroke:rgba(255,255,255,.28); stroke-width:.5; transform-origin:50% 50%}
+.orbits .o1{stroke-dasharray:1 5; animation:spin 120s linear infinite}
+.orbits .o2{stroke-dasharray:14 9; animation:spin 90s linear infinite reverse; opacity:.7}
+.orbits .o3{stroke-dasharray:2 3; animation:spin 60s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scene{position:absolute; inset:0; display:grid; place-items:center; padding:20px; text-align:center}
+.scene > *{max-width:100%}
+@keyframes rise{from{opacity:0; transform:translateY(14px); filter:blur(6px)}to{opacity:1; transform:none; filter:none}}
+@keyframes pop{from{opacity:0; transform:scale(.55); filter:blur(10px)}to{opacity:1; transform:none; filter:none}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes float{50%{transform:translateY(-6px)}}
+@keyframes shimmer{50%{opacity:.15}}
+
+.bigname{font-family:var(--font-display); font-style:italic; font-size:clamp(2.6rem,15vw,4.6rem); line-height:1.1; color:var(--accent); text-shadow:0 0 30px rgba(255,170,215,.75); overflow-wrap:anywhere}
+.bigname span.ch,.bigname>span:not(.wd){display:inline-block; opacity:0; animation:rise .9s calc(var(--i) * 110ms) both}
+.bigname .wd{display:inline-block; white-space:nowrap; margin:0 .24em}
+.bigname.full{overflow-wrap:normal; line-height:1.2}
+.scene .sub{margin-top:12px; font-size:.74rem; letter-spacing:.3em; text-transform:uppercase; color:var(--muted); animation:rise 1s .9s both}
+
+.tiles{display:flex; flex-wrap:wrap; justify-content:center; gap:6px 4px; max-width:100%}
+.tiles .gap{width:calc(var(--ts) * .5)}
+.tile{
+  width:var(--ts); display:flex; flex-direction:column; align-items:center; line-height:1.1; padding:4px 0;
+  border-radius:10px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.22);
+  opacity:0; animation:rise .6s calc(var(--i) * 70ms) both;
+}
+.tile b{font-family:var(--font-display); font-weight:500; font-size:calc(var(--ts) * .56)}
+.tile i{font-style:normal; font-size:calc(var(--ts) * .34); color:var(--accent)}
+.tile.off{background:transparent; border-color:rgba(255,255,255,.1)}
+.tile.off b,.tile.off i{opacity:.28}
+.tile.vow{background:rgba(255,200,230,.28); border-color:rgba(255,220,240,.7); box-shadow:0 0 16px rgba(255,160,215,.55)}
+.chain{margin-top:18px; font-family:var(--font-display); font-size:2rem; display:flex; gap:12px; align-items:center; justify-content:center; flex-wrap:wrap; opacity:0; animation:rise .8s var(--d) both}
+.chain .fin{color:var(--accent); text-shadow:0 0 22px rgba(255,170,215,.8); font-size:2.6rem}
+.chain .ar{opacity:.6; font-size:1.3rem}
+
+.birth{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; width:100%; max-width:380px}
+.birth div{display:flex; flex-direction:column; align-items:center; gap:2px; opacity:0; animation:rise .7s calc(var(--i) * 500ms) both}
+.birth .raw{font-family:var(--font-display); font-size:clamp(1.5rem,7vw,2.2rem)}
+.birth .ar{opacity:.6}
+.birth .red{font-family:var(--font-display); font-size:2rem; color:var(--accent); text-shadow:0 0 18px rgba(255,170,215,.7)}
+.birth small{font-size:.66rem; letter-spacing:.24em; text-transform:uppercase; color:var(--muted)}
+.birth-sum{grid-column:1/-1}
+
+.reveal{position:relative; width:min(72%,270px); aspect-ratio:1; margin-bottom:34px}
+.reveal::before{content:""; position:absolute; inset:9%; border-radius:50%; background:radial-gradient(circle at 50% 38%, rgba(255,255,255,.17), rgba(255,255,255,.03) 70%); box-shadow:inset 0 0 44px rgba(255,170,215,.28), 0 0 60px rgba(214,130,225,.25)}
+.reveal svg{position:absolute; inset:0; width:100%; height:100%; overflow:visible}
+.reveal .r1,.reveal .r2{fill:none; stroke-linecap:round}
+.reveal .r1{stroke:var(--accent); stroke-width:1.6; stroke-dasharray:540; stroke-dashoffset:540; animation:draw 1.7s ease-out forwards}
+.reveal .r2{stroke:rgba(255,255,255,.55); stroke-width:.7; stroke-dasharray:2 4; stroke-dashoffset:0; opacity:0; animation:rise 1s .8s both}
+.reveal .ray{stroke:rgba(255,230,210,.75); stroke-width:.8; opacity:0; animation:shimmer 3.2s calc(var(--i) * 190ms) infinite, rise .6s 1.1s both}
+.rv-num{position:absolute; inset:0; display:grid; place-items:center; font-family:var(--font-display); font-size:clamp(4.4rem,26vw,7.6rem); line-height:1; color:#fff; text-shadow:0 0 36px rgba(255,170,215,.95), 0 0 80px rgba(255,200,170,.6); opacity:0; animation:pop 1.1s .9s both}
+.rv-label{position:absolute; left:0; right:0; bottom:-34px; text-align:center; font-size:.74rem; letter-spacing:.3em; text-transform:uppercase; color:var(--accent); opacity:0; animation:rise 1s 1.5s both}
+
+.locks{display:flex; gap:14px; justify-content:center; flex-wrap:wrap}
+.locks div{display:flex; flex-direction:column; align-items:center; gap:10px; width:30%; min-width:84px; font-size:.64rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); line-height:1.35; opacity:0; animation:rise .8s calc(var(--i) * 280ms) both}
+.locks .ring{width:70px; height:70px; font-size:1.5rem; animation:float 4s ease-in-out infinite}
+.locks div:nth-child(2) .ring{animation-delay:-1.3s}
+.locks div:nth-child(3) .ring{animation-delay:-2.6s}
+
+/* Subtítulos y controles */
+.caption{font-weight:500; font-size:clamp(1.5rem,7vw,2.05rem); line-height:1.22; height:calc(3.66em + 8px); display:flex; align-items:center; justify-content:center; padding:4px 2px; overflow:hidden}
+.cap-in{display:block; max-width:100%; text-align:center; text-wrap:balance}
+.caption .w{display:none; color:rgba(255,255,255,.5); transition:color .3s, text-shadow .3s}
+.caption .w.show{display:inline}
+.caption .w.done{color:#fff}
+.caption .w.now{color:var(--accent); text-shadow:0 0 22px rgba(255,200,170,.75)}
+.caption .w.name{font-family:var(--font-display); font-style:italic; font-size:1.1em; line-height:1}
+.caption .w.name.done,.caption .w.name.now{color:var(--accent); text-shadow:0 0 26px rgba(255,160,215,.9)}
+@keyframes glow{50%{text-shadow:0 0 36px rgba(255,150,215,1), 0 0 8px rgba(255,230,210,.9)}}
+.caption .w.name.now{animation:glow 2.2s ease-in-out infinite}
+.controls{min-height:84px; display:flex; align-items:center; justify-content:center; gap:22px}
+.ibtn{
+  width:50px; height:50px; border-radius:50%; padding:0; display:grid; place-items:center; cursor:pointer; color:#fff;
+  background:rgba(255,255,255,.14); border:1px solid var(--line); transition:background .2s, transform .2s;
+}
+.ibtn:active,.main:active{transform:scale(.94)}
+.ibtn[aria-pressed="true"]{background:rgba(255,255,255,.26)}
+.main{
+  position:relative; width:76px; height:76px; border-radius:50%; border:0; padding:0; display:grid; place-items:center; cursor:pointer; color:#fff;
+  background:var(--btn-grad); box-shadow:0 10px 30px rgba(201,112,126,.45), 0 0 0 6px rgba(255,255,255,.08); transition:transform .2s;
+}
+.main #pp-ico{display:grid; place-items:center; position:relative}
+.pg{position:absolute; inset:-9px; width:calc(100% + 18px); height:calc(100% + 18px); pointer-events:none}
+.pg circle{fill:none; stroke-width:2}
+.pg-bg{stroke:rgba(255,255,255,.2)}
+.pg-fg{stroke:#fff; stroke-linecap:round; stroke-dasharray:232.5; stroke-dashoffset:232.5; transition:stroke-dashoffset .7s ease}
+.brand{display:flex; align-items:center; gap:12px; padding-bottom:14px; border-bottom:1px solid var(--line)}
+.brand svg{flex:none}
+.brand b{font-family:var(--font-display); font-weight:400; font-size:1.4rem; display:block; line-height:1.15}
+.brand small{font-size:.66rem; letter-spacing:.26em; text-transform:uppercase; color:var(--muted)}
+.ring.soft{border-style:dashed; color:var(--accent); background:var(--medal); font-family:var(--font-display)}
+.ripple-wrap{position:relative; display:grid; place-items:center; width:100%}
+.rp{position:absolute; width:46%; aspect-ratio:1; border-radius:50%; border:1px solid rgba(255,220,240,.65); opacity:0; animation:ripple 3.8s calc(var(--i) * 1.25s) infinite ease-out}
+.motif{display:flex; flex-direction:column; align-items:center; gap:8px; width:100%}
+.mchip{font-size:.72rem; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); padding:6px 14px; border:1px solid var(--line); border-radius:99px; background:rgba(34,16,72,.35); animation:rise .8s both}
+.mchip b{color:var(--accent); font-weight:500; letter-spacing:0}
+.m-svg{width:min(66%,240px); aspect-ratio:1; overflow:visible; filter:drop-shadow(0 0 14px rgba(255,190,220,.35))}
+.mlabel{font-family:var(--font-display); font-style:italic; font-size:1.25rem; color:var(--accent); text-shadow:0 0 22px rgba(255,170,215,.6); animation:rise 1s .5s both}
+.m-svg *:not(g){transform-box:fill-box; transform-origin:center}
+.m-draw{stroke-dashoffset:1; animation:mdraw var(--t,1.8s) var(--d,0s) ease-out forwards}
+@keyframes mdraw{to{stroke-dashoffset:0}}
+.m-glow{filter:drop-shadow(0 0 5px #ffd27a)}
+.m-wave{opacity:0; animation:mwave 3.2s var(--d,0s) ease-out infinite}
+@keyframes mwave{0%{transform:scale(.6); opacity:.9}100%{transform:scale(2.6); opacity:0}}
+.m-pulse{animation:mpulse 2.4s var(--d,0s) ease-in-out infinite both}
+@keyframes mpulse{50%{transform:scale(1.14)}}
+.m-halo{animation:mpulse 3s ease-in-out infinite}
+.m-eclipse{transform:translateX(70px); animation:meclipse 3.4s .3s cubic-bezier(.3,.7,.2,1) forwards}
+@keyframes meclipse{to{transform:translateX(16px)}}
+.m-tw{opacity:0; animation:mtw 2.6s var(--d,0s) ease-in-out infinite}
+@keyframes mtw{50%{opacity:1}}
+.m-petal{transform-origin:50% 100%; transform:scale(0); animation:mpetal 1.2s var(--d,0s) cubic-bezier(.2,1.2,.3,1) forwards}
+@keyframes mpetal{to{transform:scale(1)}}
+.m-seed{transform:scale(.3); animation:mseed 1.2s both; animation-name:mseed}
+@keyframes mseed{to{transform:scale(1)}}
+.m-stone,.m-star{transform:scale(0); animation:mstone .8s var(--d,0s) cubic-bezier(.2,1.4,.3,1) forwards}
+@keyframes mstone{to{transform:scale(1)}}
+.m-star{animation-name:mstar}
+@keyframes mstar{to{transform:scale(1) rotate(0)} from{transform:scale(0) rotate(-90deg)}}
+.m-flame{transform-origin:50% 100%; animation:mflame 1.8s var(--d,0s) ease-in-out infinite}
+@keyframes mflame{0%,100%{transform:scale(1,1)}50%{transform:scale(.94,1.06)}}
+@media (prefers-reduced-motion:reduce){.m-wave,.m-pulse,.m-halo,.m-tw,.m-flame{animation:none; opacity:.8}}
+@keyframes ripple{from{transform:scale(.55); opacity:.85}to{transform:scale(3.1); opacity:0}}
+.same{display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; max-width:420px}
+.orb{display:flex; flex-direction:column; align-items:center; gap:10px; opacity:0; animation:rise .9s .2s both; min-width:0}
+.orb.b{animation-delay:1.8s}
+.orb .dot{width:22px; height:22px; border-radius:50%; background:var(--accent); box-shadow:0 0 42px 14px rgba(255,200,170,.55)}
+.orb.b .dot{background:#c4bdf2; box-shadow:0 0 42px 14px rgba(170,160,255,.45)}
+.orb .dt{font-size:.9rem; letter-spacing:.1em; color:var(--muted); margin-top:8px; white-space:nowrap}
+.orb.a .dt{color:var(--accent)}
+.orb .nmx{font-family:var(--font-display); font-size:2rem; line-height:1.1; overflow-wrap:anywhere}
+.orb.a .nmx{color:var(--accent); text-shadow:0 0 22px rgba(255,170,215,.7)}
+.orb.b .nmx{color:var(--rose)}
+
+/* Informe */
+.tracker{display:grid; grid-template-columns:repeat(5,1fr); gap:6px; text-align:center}
+.tracker>div{display:flex; flex-direction:column; align-items:center; gap:8px; font-size:.64rem; letter-spacing:.06em; color:var(--muted); min-width:0; line-height:1.25}
+.tracker .ring{width:100%; max-width:58px; height:auto; aspect-ratio:1; font-size:1.55rem}
+.chapter{background:var(--glass); border:1px solid var(--line); border-radius:28px; padding:26px 22px; display:flex; flex-direction:column; gap:16px;}
+.chapter header{display:flex; align-items:center; gap:16px}
+.chapter .body{display:flex; flex-direction:column; gap:14px}
+.chapter.locked{background:var(--glass-2)}
+.nm{font-family:var(--font-display); font-style:italic; color:var(--accent); font-size:1.08em}
+.ghostlines{display:flex; flex-direction:column; gap:10px; filter:blur(3px); opacity:.5; user-select:none}
+.ghostlines i{height:10px; border-radius:5px; background:#fff; display:block}
+.lockrow{font-size:.78rem; letter-spacing:.2em; text-transform:uppercase; color:var(--accent); font-weight:500}
+.offer{border:1px solid rgba(255,255,255,.5); border-radius:32px; padding:30px 22px; display:flex; flex-direction:column; gap:18px; background:var(--glass-2);}
+.price{font-family:var(--font-display); font-size:3.8rem; line-height:1; color:#fff}
+.price small{font-family:var(--font-body); font-size:.95rem; color:var(--muted); margin-left:8px}
+.list{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:12px}
+.list li{display:flex; gap:12px}
+.list li::before{content:""; flex:none; width:9px; height:9px; margin-top:.6em; border:1px solid var(--accent); border-radius:50%}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms!important; animation-delay:0s!important; animation-iteration-count:1!important; transition:none!important}
+  .orbits circle{animation:none!important}
+}
+</style>
+
+<main class="wrap">
+  <a class="brand" href="/" aria-label="Volver al inicio de Vortex de Sabiduría" style="color:inherit;text-decoration:none"><svg viewBox="0 0 48 48" width="38" height="38" fill="var(--accent)" aria-hidden="true"><path d="M31 7a17.5 17.5 0 1 0 10.5 29.5A14.5 14.5 0 0 1 31 7z"/><path d="M36 11l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z"/><circle cx="41" cy="25" r="1.1"/></svg><div><b>Vortex de Sabiduría</b><small>Stella Cante Molina</small></div></a>
+
+  <!-- Entrada -->
+  <section id="v-start" class="hero" aria-labelledby="t-start">
+    <p class="eyebrow">Lectura numerológica gratuita</p>
+    <h1 id="t-start">Tu carta numerológica ya sabe <em>lo que estás buscando</em></h1>
+    <p class="muted">Lo que tu fecha de nacimiento y tu nombre han intentado decirte: descubre tres de tus cinco números ahora.</p>
+    <ul class="chips" aria-label="Qué incluye">
+      <li>Sin registro</li><li>Personalizada</li><li>En audio</li>
+    </ul>
+    <form id="form" class="form" novalidate>
+      <div>
+        <label for="nombre">Tu nombre completo</label>
+        <input id="nombre" name="nombre" type="text" autocomplete="name" placeholder="Ej.: María Fernanda López">
+        <p class="note" style="margin-top:6px">Como está en tu acta de nacimiento.</p>
+      </div>
+      <div>
+        <label for="f-dia">Tu fecha de nacimiento</label>
+        <div class="dates">
+          <input id="f-dia" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="Día" autocomplete="bday-day" aria-label="Día">
+          <select id="f-mes" aria-label="Mes" autocomplete="bday-month"></select>
+          <input id="f-anio" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="Año" autocomplete="bday-year" aria-label="Año">
+        </div>
+      </div>
+      <p id="err" class="err" role="alert"></p>
+      <button class="btn" type="submit">Ver mi lectura ▸</button>
+    </form>
+    <p class="note center" style="align-self:center">Lectura guiada en audio: sube el volumen y ponte cómoda.</p>
+    <p class="note center">Contenido de entretenimiento y reflexión personal. La numerología no es una ciencia ni sustituye consejo médico, legal o financiero.</p>
+  </section>
+
+  <!-- Escenario narrado -->
+  <section id="v-stage" hidden class="wrap" style="gap:14px" aria-label="Lectura narrada">
+    <div class="stage" id="stage">
+      <canvas id="sky" aria-hidden="true"></canvas>
+      <svg class="orbits" viewBox="0 0 400 420" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <circle class="o1" cx="200" cy="200" r="150"/>
+        <circle class="o2" cx="200" cy="200" r="118"/>
+        <circle class="o3" cx="200" cy="200" r="182"/>
+      </svg>
+      <div class="scene" id="scene"></div>
+    </div>
+    <p class="caption" id="caption" aria-live="polite"></p>
+    <div class="controls" id="controls">
+      <button id="mute" class="ibtn" type="button" aria-label="Silenciar la voz" aria-pressed="false"></button>
+      <button id="pp" class="main" type="button" aria-label="Pausar la lectura">
+        <svg class="pg" viewBox="0 0 80 80" aria-hidden="true"><circle class="pg-bg" cx="40" cy="40" r="37"/><circle class="pg-fg" id="pgfg" cx="40" cy="40" r="37" transform="rotate(-90 40 40)"/></svg>
+        <span id="pp-ico"></span>
+      </button>
+      <button id="rep" class="ibtn" type="button" aria-label="Repetir esta frase"></button>
+    </div>
+  </section>
+
+  <!-- Informe -->
+  <section id="v-read" hidden class="wrap" style="gap:20px">
+    <div>
+      <p class="eyebrow">Informe de <span id="r-name" class="nm"></span></p>
+      <h2 style="margin-top:8px">Tus cinco <em>números</em></h2>
+    </div>
+    <div class="tracker" id="tracker"></div>
+    <div id="chapters" class="wrap" style="gap:16px"></div>
+
+    <section class="offer" id="offer" aria-labelledby="t-offer">
+      <p class="eyebrow">Lo que ninguna calculadora te dice</p>
+      <h2 id="t-offer">Tus números tienen una historia. <em>Cuéntasela a Stella</em></h2>
+      <p class="muted">Cualquier página puede darte un número. Lo que de verdad mueve algo es que alguien te escuche y lo cruce con lo que estás viviendo ahora.</p>
+      <ul class="list">
+        <li>Tus cinco números leídos juntos, con tu nombre y tu historia, <span id="o-name" class="nm"></span></li>
+        <li>Qué hacer con lo que sentiste mientras escuchabas esta lectura</li>
+        <li>De dónde viene ese patrón que se repite, mirado con calma desde la terapia de constelaciones</li>
+      </ul>
+      <a id="cta" class="btn" href="#" target="_blank" rel="noopener">Hablar con Stella por WhatsApp</a>
+      <p id="cta-note" class="note" hidden></p>
+      <p class="note">Se abre WhatsApp con un mensaje listo con tu nombre y tus números. Ella te responde personalmente y te cuenta cómo son las sesiones, virtuales o presenciales. Puedes editar el mensaje antes de enviarlo.</p>
+    </section>
+
+    <button id="replay" class="btn ghost" type="button">Volver a escuchar mi lectura</button>
+    <button id="again" class="btn ghost" type="button">Calcular otra persona</button>
+  </section>
+</main>
+
+<script>
+/* ============ Configuración ============ */
+// WhatsApp de tu mamá, con código de país y solo dígitos. Ejemplo para Colombia: "573001234567".
+var WHATSAPP_NUMBER = "573134385783";
+var LAST_REPORT = null; // nombre y números de la lectura actual, para el mensaje de WhatsApp
+var WPM = 105; // ritmo estimado cuando no hay voz
+
+/* ============ Numerología pitagórica ============ */
+var MASTER = [11,22,33];
+function digitSum(n){ var s=0; String(n).split("").forEach(function(c){ s+=+c; }); return s; }
+function reduce(n){ while(n>9 && MASTER.indexOf(n)===-1){ n=digitSum(n); } return n; }
+function chain(n){ var a=[n]; while(a[a.length-1]>9 && MASTER.indexOf(a[a.length-1])===-1) a.push(digitSum(a[a.length-1])); return a; }
+function normalize(str){ return str.toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Z]/g,""); }
+function letterValue(ch){ return ((ch.charCodeAt(0)-65)%9)+1; }
+function sumLetters(str, filter){ var t=0; normalize(str).split("").forEach(function(ch){ if(filter(ch)) t+=letterValue(ch); }); return t; }
+var isVowel=function(c){ return "AEIOU".indexOf(c)!==-1; };
+function compute(name, y, m, d){
+  var camino=reduce(reduce(d)+reduce(m)+reduce(y));
+  var expresion=reduce(sumLetters(name,function(){return true;}));
+  var alma=reduce(sumLetters(name,isVowel));
+  var persona=reduce(sumLetters(name,function(c){return !isVowel(c);}));
+  var dia=reduce(d);
+  return {camino:camino, expresion:expresion, alma:alma, personalidad:persona, dia:dia};
+}
+
+/* ============ Contenido ============ */
+var NUM = {
+  1:{p:"la iniciativa",
+    sentir:"Quizás has sentido que te toca ir primero, abrir camino aunque nadie te haya enseñado cómo. Eso pesa, y también te hace valiente.",
+    sombra:"A veces cargas con todo sin pedir ayuda, por miedo a depender de alguien. Detrás de esa fortaleza hay un cansancio que casi no muestras.",
+    don:"Tu don es empezar. Donde otros dudan, tú das el primer paso, y esa decisión contagia a quienes te rodean.",
+    invit:"{n}, no tienes que demostrar nada para merecer descanso. Puedes liderar y, al mismo tiempo, dejarte acompañar.",
+    talento:"Llegaste con la capacidad de iniciar cosas nuevas, de tomar una idea y volverla camino.",
+    mundo:"El mundo te ve con determinación, aunque por dentro a veces haya preguntas que no dices.",
+    cuidado:"{n}, cuida que tu fuerza abra espacio para los demás y no los deje atrás. Ahí está tu mejor versión.",
+    deseo:"En silencio deseas que reconozcan lo que eres, y no solo lo que logras.",
+    herida:"Hay una parte tuya que teme quedarse atrás, o no ser suficiente cuando no lideras.",
+    abrazo:"{n}, tu alma te pide confiar: no todo depende de ti. Respira, y deja que la vida también te sostenga."},
+  2:{p:"la cooperación",
+    sentir:"Quizás has sentido que percibes el ánimo de los demás antes de que hablen, y que a veces eso te agota más de lo que dices.",
+    sombra:"Por cuidar la paz, a veces te callas lo que necesitas. Con el tiempo, ese silencio se vuelve una distancia contigo.",
+    don:"Tu don es unir. Donde hay tensión, tu presencia suaviza, y la gente respira distinto a tu lado.",
+    invit:"{n}, tu necesidad también merece voz. Decirla no rompe la armonía: la hace verdadera.",
+    talento:"Llegaste con el talento de escuchar a fondo y de tender puentes entre personas que no sabían cómo encontrarse.",
+    mundo:"Los demás te ven como alguien confiable y tranquilo, un lugar seguro para quedarse.",
+    cuidado:"{n}, cuida que tu amabilidad no se convierta en renuncia. Puedes ser dulce y firme a la vez.",
+    deseo:"En silencio deseas vínculos donde no tengas que esforzarte para que te quieran.",
+    herida:"Hay una parte tuya que teme el rechazo, y por eso a veces eliges agradar antes que ser.",
+    abrazo:"{n}, tu alma pide pertenecer sin desaparecer. Mereces un lugar donde puedas ser tú por completo."},
+  3:{p:"la expresión",
+    sentir:"Quizás has sentido que dentro de ti hay mucho más por decir de lo que sale: ideas, colores, risas que a veces guardas.",
+    sombra:"Cuando dudas de ti, te escondes detrás del humor o te dispersas, y lo que más querías mostrar se queda sin nacer.",
+    don:"Tu don es dar vida a lo que tocas, con tus palabras, con tu ánimo, con una mirada que ilumina.",
+    invit:"{n}, no esperes a tener todo resuelto para expresarte. Tu voz, así como es hoy, ya hace falta.",
+    talento:"Llegaste con el talento de comunicar, de convertir lo que sientes en algo que otros puedan sentir también.",
+    mundo:"El mundo te percibe luminoso y cercano, y a veces no sospecha cuánta profundidad hay detrás de tu sonrisa.",
+    cuidado:"{n}, cuida tu energía creativa: termina lo que empiezas con cariño, y no solo con entusiasmo.",
+    deseo:"En silencio deseas que te escuchen de verdad, más allá de la parte alegre que sueles mostrar.",
+    herida:"Hay una parte tuya que temió ser demasiado, o que no te tomaran en serio.",
+    abrazo:"{n}, tu alma pide permiso para sentir en todos los tonos, no solo en los alegres. Todos caben en ti."},
+  4:{p:"la construcción",
+    sentir:"Quizás has sentido la responsabilidad de sostener, de que todo funcione, de no fallarle a nadie.",
+    sombra:"Te exiges tanto que el descanso te da culpa. Y cuando algo cambia sin avisar, sientes que el suelo se mueve.",
+    don:"Tu don es dar estabilidad. Lo que prometes se cumple, y lo que levantas permanece.",
+    invit:"{n}, no todo se arregla con esfuerzo. También se construye descansando, y descansar es parte del trabajo.",
+    talento:"Llegaste con el talento de ordenar, de convertir lo caótico en algo firme donde otros pueden apoyarse.",
+    mundo:"Los demás te ven como alguien de palabra firme, y muchas veces nadie nota cuánto cuesta serlo.",
+    cuidado:"{n}, cuida que tu disciplina no se vuelva dureza contigo. Tú también mereces ternura.",
+    deseo:"En silencio deseas seguridad, un hogar interior donde nada se derrumbe.",
+    herida:"Hay una parte tuya que aprendió que el cariño se gana trabajando sin parar.",
+    abrazo:"{n}, tu alma pide confiar en que puedes soltar el control un momento, y que aun así todo estará bien."},
+  5:{p:"la libertad",
+    sentir:"Quizás has sentido una inquietud que no sabes bien nombrar: ganas de moverte, de cambiar, de respirar más ancho.",
+    sombra:"A veces sales corriendo antes de que algo se vuelva profundo, por miedo a que lo que no elegiste te ate.",
+    don:"Tu don es adaptarte. Aprendes rápido y encuentras salida donde otros solo ven muros.",
+    invit:"{n}, la libertad no está solo en irte. También está en elegir quedarte, y que esa sea tu decisión.",
+    talento:"Llegaste con el talento de reinventarte, de transformar lo que no funciona en una puerta nueva.",
+    mundo:"El mundo te percibe magnético y cambiante, alguien con quien nunca hay dos días iguales.",
+    cuidado:"{n}, cuida a quienes te quieren cuando sientas ganas de huir: a veces solo necesitan saber que vuelves.",
+    deseo:"En silencio deseas vivir con ligereza, sin que nadie ponga límites a tu manera de ser.",
+    herida:"Hay una parte tuya que teme las cadenas, y que quizás aprendió a protegerse con la distancia.",
+    abrazo:"{n}, tu alma pide raíces que no pesen: un lugar al que volver sin dejar de ser libre."},
+  6:{p:"el cuidado",
+    sentir:"Quizás has sentido que eres el hombro de todos, que sabes lo que necesita cada persona antes de que lo pida.",
+    sombra:"Cargas con problemas ajenos y te olvidas de preguntarte cómo estás. Con el tiempo, dar sin recibir también pesa.",
+    don:"Tu don es crear hogar. Donde llegas, la gente se siente cuidada, vista, bienvenida.",
+    invit:"{n}, tú también eres parte de las personas a quienes cuidas. Hoy, pregúntate qué necesitas.",
+    talento:"Llegaste con el talento de cuidar, de hacer que los demás se sientan en casa en tu presencia.",
+    mundo:"Los demás te ven como alguien cálido y generoso, un refugio al que siempre se puede volver.",
+    cuidado:"{n}, cuida que dar no se vuelva obligación. El amor también sabe decir que no.",
+    deseo:"En silencio deseas armonía, una familia, la que nace o la que eliges, donde reine la paz.",
+    herida:"Hay una parte tuya que teme que, si dejas de dar, ya no te quieran igual.",
+    abrazo:"{n}, tu alma pide ser cuidada con la misma ternura con la que cuidas. Permítete recibir."},
+  7:{p:"la búsqueda",
+    sentir:"Quizás has sentido que miras más hondo que los demás, que necesitas entender el porqué de las cosas.",
+    sombra:"Cuando algo duele, te encierras en tu mundo y piensas que nadie lo entendería. Esa soledad a veces es refugio, y otras veces es cárcel.",
+    don:"Tu don es la profundidad. Tu intuición y tu mente trabajan juntas para ver lo que otros pasan por alto.",
+    invit:"{n}, deja entrar a alguien en tu silencio. Compartir lo que piensas no te hace menos libre.",
+    talento:"Llegaste con el talento de investigar, de intuir lo invisible y de encontrarle sentido a lo que parece confuso.",
+    mundo:"Los demás te ven reservado y misterioso, y a veces no saben cuánta ternura hay en tu mirada.",
+    cuidado:"{n}, cuida tus momentos de soledad: que te recarguen, y que no te alejen de quienes te quieren.",
+    deseo:"En silencio deseas encontrar la verdad, tener paz interior y una respuesta que por fin te calme.",
+    herida:"Hay una parte tuya que no se sintió comprendida, y que aprendió a callar lo que sentía.",
+    abrazo:"{n}, tu alma pide confianza: no tienes que descifrarlo todo para estar en paz. A veces basta con sentir."},
+  8:{p:"el logro",
+    sentir:"Quizás has sentido una fuerza que te empuja a más, como si siempre hubiera algo grande esperándote.",
+    sombra:"A veces mides tu valor por lo que consigues. Y cuando no llegas, te hablas con una dureza que a nadie más le permitirías.",
+    don:"Tu don es materializar. Ves el cuadro grande, organizas recursos y llevas los proyectos hasta el final.",
+    invit:"{n}, tu valor no depende de tus logros. Eres suficiente incluso en los días en que no haces nada extraordinario.",
+    talento:"Llegaste con el talento de liderar, de construir con visión y de convertir una idea en abundancia real.",
+    mundo:"El mundo te percibe con poder y seguridad, y casi nadie ve cuánta vulnerabilidad cuidas detrás.",
+    cuidado:"{n}, cuida que el éxito no te aleje de lo que importa. Que lo que construyes también te abrace.",
+    deseo:"En silencio deseas respeto, estabilidad y sentir que tu esfuerzo valió la pena.",
+    herida:"Hay una parte tuya que aprendió que el amor había que ganárselo con resultados.",
+    abrazo:"{n}, tu alma pide descanso sin culpa. No tienes que ganarte el derecho a ser feliz."},
+  9:{p:"la entrega",
+    sentir:"Quizás has sentido que el dolor ajeno te toca como si fuera propio, y que te importa lo que vendrá después de ti.",
+    sombra:"Te cuesta cerrar ciclos. Sueltas con dolor lo que ya cumplió su tiempo, y a veces te quedas donde ya no floreces.",
+    don:"Tu don es la compasión. Ves el cuadro completo, y la gente te confía su historia porque sabe que no la juzgarás.",
+    invit:"{n}, despedirte también es un acto de amor. Suelta lo que ya terminó y deja espacio para lo que viene.",
+    talento:"Llegaste con el talento de comprender, de abrazar a otros desde una sabiduría que parece mayor que tu edad.",
+    mundo:"Los demás te ven como alguien sabio y sensible, y muchas veces te buscan cuando no encuentran salida.",
+    cuidado:"{n}, cuida tu energía: no puedes salvar a todos. Está bien dejar que cada quien camine su propio proceso.",
+    deseo:"En silencio deseas un mundo más amable, y un lugar donde tu entrega tenga sentido.",
+    herida:"Hay una parte tuya que carga despedidas antiguas y que aún no se permitió llorarlas del todo.",
+    abrazo:"{n}, tu alma pide cerrar ciclos con ternura. Lo que sueltas no se pierde: se transforma."},
+  11:{p:"la intuición",
+    sentir:"Quizás has sentido que percibes más de lo que se dice: climas, silencios, verdades que aún no tienen nombre.",
+    sombra:"Esa sensibilidad a veces te sobrecarga. Sin espacios de calma, el mundo se siente demasiado fuerte.",
+    don:"Tu don es la intuición. Es un número maestro: inspiras con tu sola presencia, incluso cuando no dices nada.",
+    invit:"{n}, protege tus momentos de silencio. Ahí tu luz se ordena, y desde ahí puedes ayudar a otros.",
+    talento:"Llegaste con el talento de ver lo invisible y de traducirlo en palabras que otros necesitan oír.",
+    mundo:"Los demás sienten tu luz, aunque no sepan explicarla, y se acercan buscando claridad.",
+    cuidado:"{n}, cuida tu sistema nervioso como cuidarías algo sagrado. Descansar también es servir.",
+    deseo:"En silencio deseas una conexión profunda, con algo más grande que tú y con personas que lo sientan igual.",
+    herida:"Hay una parte tuya que se sintió diferente desde muy temprano, y que aprendió a esconder lo que percibía.",
+    abrazo:"{n}, tu alma pide que confíes en lo que sientes. Tu sensibilidad no es un defecto: es tu brújula."},
+  22:{p:"la obra grande",
+    sentir:"Quizás has sentido que traes algo grande por construir, un sueño que no cabe en lo pequeño.",
+    sombra:"El peso de tus propias expectativas a veces te paraliza. Entre lo que sueñas y lo que ya hiciste, te olvidas de celebrar.",
+    don:"Tu don es materializar lo que parece imposible. Es un número maestro: unes visión y práctica, y puedes levantar estructuras que sirvan a muchos.",
+    invit:"{n}, empieza por un paso pequeño y real. Las grandes obras se construyen una decisión a la vez.",
+    talento:"Llegaste con el talento de convertir un sueño en obra, y de reunir a otros alrededor de algo que vale la pena.",
+    mundo:"Los demás ven en ti una capacidad que inspira respeto, y a veces no imaginan cuánta presión sientes.",
+    cuidado:"{n}, cuida que tu ambición tenga raíces en lo que amas. Así tu obra no te agota: te alimenta.",
+    deseo:"En silencio deseas dejar algo que importe, y que tu paso por el mundo tenga sentido.",
+    herida:"Hay una parte tuya que teme no estar a la altura de lo que viniste a hacer.",
+    abrazo:"{n}, tu alma pide paciencia contigo. No tienes que hacerlo todo perfecto: solo seguir, con amabilidad."},
+  33:{p:"la guía",
+    sentir:"Quizás has sentido que algo en ti nació para acompañar, para sostener y para enseñar con tu ejemplo.",
+    sombra:"Te cuesta poner límites cuando alguien te necesita. Te das tanto que a veces no queda nada para ti.",
+    don:"Tu don es la guía compasiva. Es un número maestro: tu paciencia sostiene a los demás y los ayuda a creer en sí mismos.",
+    invit:"{n}, decir no también es amor. Con límites claros, tu ayuda se vuelve más fuerte y más sana.",
+    talento:"Llegaste con el talento de enseñar desde el cariño, de sanar con tu presencia y con tu palabra.",
+    mundo:"Los demás te ven como un refugio, alguien que entiende sin juzgar.",
+    cuidado:"{n}, cuida a quien cuida: a ti. Tu bienestar no es egoísmo, es la base de todo lo que das.",
+    deseo:"En silencio deseas un mundo en paz y poder servirlo sin perderte a ti.",
+    herida:"Hay una parte tuya que aprendió que su valor estaba en servir, y que olvidó pedir para sí.",
+    abrazo:"{n}, tu alma pide recibir tanto como da. Mereces la misma ternura que ofreces."}
+};
+function fill(s, first){ return s.replace(/\{n\}/g, first); }
+function chapterText(kind, n, name){
+  var d=NUM[n], first=name.split(" ")[0];
+  if(kind==="camino") return [
+    first+", tu camino de vida es el "+n+". Es el hilo que atraviesa tu historia: la lección "+(/^el /.test(d.p)?d.p.replace(/^el /,"del "):"de "+d.p)+".",
+    fill(d.sentir,first), fill(d.sombra,first), fill(d.don,first), fill(d.invit,first)];
+  if(kind==="expresion") return [
+    "Tu número de expresión es el "+n+", "+first+". Habla de lo que trajiste para dar y de cómo lo muestras al mundo.",
+    fill(d.talento,first), fill(d.mundo,first), fill(d.cuidado,first)];
+  return [
+    "Tu número del alma es el "+n+". Es lo que tu corazón pide cuando nadie mira, "+first+".",
+    fill(d.deseo,first), fill(d.herida,first), fill(d.abrazo,first)];
+}
+
+/* ============ Parámetros de campaña ============ */
+var TRACK={};
+try{ new URLSearchParams(location.search).forEach(function(v,k){ if(/^(utm_|fb_|sf_)/.test(k)||k==="fbclid") TRACK[k]=v; }); }catch(e){}
+
+var $=function(id){return document.getElementById(id);};
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
+var REDUCED = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+/* ============ Cielo (canvas) ============ */
+var Sky=(function(){
+  var cv=$("sky"), cx=cv.getContext("2d"), W=0,H=0,stars=[],parts=[],shoot=null,nextShoot=0,run=false,raf=0,cons=[];
+  var COLORS=["255,255,255","255,226,208","255,170,225","214,190,255"];
+  function size(){
+    var r=cv.getBoundingClientRect(); if(!r.width) return; var dpr=Math.min(window.devicePixelRatio||1,2);
+    W=r.width; H=r.height; cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr); cx.setTransform(dpr,0,0,dpr,0,0);
+    stars=[]; var n=Math.round(W*H/2600);
+    for(var i=0;i<n;i++) stars.push({x:Math.random()*W,y:Math.random()*H,r:.4+Math.random()*1.3,p:Math.random()*6.28,s:.6+Math.random()*1.6,c:COLORS[(Math.random()*COLORS.length)|0]});
+    cons=[[[.07,.14],[.14,.19],[.18,.29],[.28,.26],[.34,.35]],[[.64,.70],[.71,.66],[.78,.72],[.82,.82],[.91,.78]]].map(function(c){ return c.map(function(q){ return {x:q[0]*W,y:q[1]*H}; }); });
+  }
+  function frame(t){
+    cx.clearRect(0,0,W,H);
+    cons.forEach(function(c,ci){
+      cx.strokeStyle="rgba(255,225,240,"+(.2+.1*Math.sin(t/1500+ci*2)).toFixed(2)+")"; cx.lineWidth=.9; cx.beginPath();
+      c.forEach(function(q,k){ if(k) cx.lineTo(q.x,q.y); else cx.moveTo(q.x,q.y); }); cx.stroke();
+      c.forEach(function(q){ cx.fillStyle="rgba(255,235,225,.16)"; cx.beginPath(); cx.arc(q.x,q.y,5,0,6.283); cx.fill();
+        cx.fillStyle="rgba(255,240,230,.95)"; cx.beginPath(); cx.arc(q.x,q.y,1.8,0,6.283); cx.fill(); });
+    });
+    for(var i=0;i<stars.length;i++){ var s=stars[i], a=REDUCED?.8:.45+.5*Math.sin(t/1000*s.s+s.p);
+      cx.fillStyle="rgba("+s.c+","+a.toFixed(2)+")"; cx.beginPath(); cx.arc(s.x,s.y,s.r,0,6.283); cx.fill(); }
+    if(!REDUCED){
+      if(!shoot && t>nextShoot){ shoot={x:Math.random()*W*.6,y:Math.random()*H*.35,vx:5+Math.random()*3,vy:2.4+Math.random()*1.5,l:0}; nextShoot=t+3800+Math.random()*4500; }
+      if(shoot){ shoot.x+=shoot.vx; shoot.y+=shoot.vy; shoot.l++;
+        var g=cx.createLinearGradient(shoot.x,shoot.y,shoot.x-shoot.vx*9,shoot.y-shoot.vy*9);
+        g.addColorStop(0,"rgba(255,255,255,.95)"); g.addColorStop(1,"rgba(255,255,255,0)");
+        cx.strokeStyle=g; cx.lineWidth=1.6; cx.beginPath(); cx.moveTo(shoot.x,shoot.y); cx.lineTo(shoot.x-shoot.vx*9,shoot.y-shoot.vy*9); cx.stroke();
+        if(shoot.l>60||shoot.x>W||shoot.y>H) shoot=null; }
+      for(var j=parts.length-1;j>=0;j--){ var p=parts[j]; p.x+=p.vx; p.y+=p.vy; p.vy+=.012; p.l-=.016;
+        if(p.l<=0){ parts.splice(j,1); continue; }
+        cx.fillStyle="rgba("+p.c+","+Math.max(0,p.l).toFixed(2)+")"; cx.beginPath(); cx.arc(p.x,p.y,p.r,0,6.283); cx.fill(); }
+    }
+  }
+  function loop(t){ if(!run) return; frame(t); raf=requestAnimationFrame(loop); }
+  return {
+    start:function(){ size(); if(run) return; run=true; if(REDUCED){ frame(0); run=false; } else raf=requestAnimationFrame(loop); },
+    stop:function(){ run=false; cancelAnimationFrame(raf); },
+    resize:function(){ var r=cv.getBoundingClientRect(); if(Math.abs(r.width-W)>2) size(); },
+    burst:function(){
+      if(REDUCED||!W) return; var x=W/2,y=H*.45;
+      for(var i=0;i<46;i++){ var a=Math.random()*6.283, v=.8+Math.random()*2.6;
+        parts.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-.4,r:.8+Math.random()*1.9,l:1,c:COLORS[(Math.random()*3)|0]}); }
+    }
+  };
+})();
+window.addEventListener("resize", function(){ if(!$("v-stage").hidden) Sky.resize(); });
+
+/* ============ Escenas ============ */
+function setScene(html){ $("scene").innerHTML=html; }
+function sceneName(first){
+  var l=first.split("").map(function(c,i){ return '<span style="--i:'+i+'">'+esc(c)+'</span>'; }).join("");
+  return '<div><div class="bigname" aria-hidden="true">'+l+'</div><div class="sub">tu nombre y tu fecha</div></div>';
+}
+function sceneBirth(o){
+  var rd=reduce(o.d), rm=reduce(o.m), ry=reduce(o.y), s=rd+rm+ry, ch=chain(s);
+  function col(raw,red,lab,i){ return '<div style="--i:'+i+'"><small>'+lab+'</small><span class="raw">'+raw+'</span><span class="ar">↓</span><span class="red">'+red+'</span></div>'; }
+  var chainHtml=ch.map(function(n,i){ return (i?'<span class="ar">→</span>':'')+'<span'+(i===ch.length-1?' class="fin"':'')+'>'+n+'</span>'; }).join("");
+  return '<div class="birth">'+col(o.d,rd,"día",0)+col(o.m,rm,"mes",1)+col(o.y,ry,"año",2)+
+    '<div class="birth-sum" style="--i:3"><small>'+rd+' + '+rm+' + '+ry+' ='+'</small><span class="chain" style="--d:0s;margin-top:4px">'+chainHtml+'</span></div></div>';
+}
+function sceneLetters(name, kind){
+  var words=name.trim().split(/\s+/).map(normalize).filter(Boolean), all=words.join("").length;
+  var ts= all<=12?42 : all<=20?34 : all<=28?27 : 22, i=0, total=0, html="";
+  words.forEach(function(w,wi){
+    if(wi) html+='<span class="gap"></span>';
+    w.split("").forEach(function(c){
+      var v=letterValue(c), vow=isVowel(c), on=(kind==="all")||vow;
+      if(on) total+=v;
+      html+='<span class="tile'+(kind==="vowels"?(vow?' vow':' off'):'')+'" style="--i:'+(i++)+'"><b>'+c+'</b><i>'+v+'</i></span>';
+    });
+  });
+  var ch=chain(total), d=(i*0.07+0.6).toFixed(2)+"s";
+  var chainHtml=ch.map(function(n,k){ return (k?'<span class="ar">→</span>':'')+'<span'+(k===ch.length-1?' class="fin"':'')+'>'+n+'</span>'; }).join("");
+  return '<div><div class="tiles" style="--ts:'+ts+'px" aria-hidden="true">'+html+'</div><div class="chain" style="--d:'+d+'">'+chainHtml+'</div></div>';
+}
+function sceneReveal(n,label){
+  var rays=""; for(var k=0;k<16;k++){ var a=k*22.5; rays+='<line class="ray" style="--i:'+k+'" x1="100" y1="6" x2="100" y2="16" transform="rotate('+a+' 100 100)"/>'; }
+  return '<div class="reveal"><svg viewBox="0 0 200 200" aria-hidden="true"><circle class="r1" cx="100" cy="100" r="86" transform="rotate(-90 100 100)"/><circle class="r2" cx="100" cy="100" r="74"/>'+rays+'</svg>'+
+    '<div class="rv-num">'+n+'</div><div class="rv-label">'+esc(label)+'</div></div>';
+}
+function pad2(n){ return (n<10?"0":"")+n; }
+function sceneRipple(first){
+  var l=first.split("").map(function(c,i){ return '<span style="--i:'+i+'">'+esc(c)+'</span>'; }).join("");
+  return '<div class="ripple-wrap"><span class="rp" style="--i:0"></span><span class="rp" style="--i:1"></span><span class="rp" style="--i:2"></span><div class="bigname" aria-hidden="true">'+l+'</div></div>';
+}
+function sceneSame(first,o){
+  var date=pad2(o.d)+" · "+pad2(o.m)+" · "+o.y;
+  return '<div class="same"><div class="orb a"><i class="dot"></i><span class="dt">'+date+'</span><span class="nmx">'+esc(first)+'</span></div>'+
+    '<div class="orb b"><i class="dot"></i><span class="dt">'+date+'</span><span class="nmx">?</span></div></div>';
+}
+function sceneRest(){
+  function it(l,i){ return '<div style="--i:'+i+'"><span class="ring soft" aria-hidden="true">?</span><span>'+l+'</span></div>'; }
+  return '<div class="locks">'+it("Personalidad",0)+it("Día de nacimiento",1)+it("Cruce de los cinco",2)+'</div>';
+}
+
+/* ============ Guion ============ */
+function sceneFullName(name){
+  var i=0, size=name.length<=14?3.4:(name.length<=22?2.6:2.1);
+  var html=name.split(/\s+/).filter(Boolean).map(function(w){
+    return '<span class="wd">'+w.split("").map(function(c){ return '<span class="ch" style="--i:'+(i++)+'">'+esc(c)+'</span>'; }).join("")+'</span>';
+  }).join("");
+  return '<div><div class="bigname full" style="font-size:min('+size+'rem,12vw)" aria-hidden="true">'+html+'</div><div class="sub">el nombre con el que llegaste</div></div>';
+}
+/* ============ Motivos animados: ilustran de qué habla cada párrafo ============ */
+var MOTIF_TXT={sentir:"Lo que sientes",sombra:"Tu sombra",don:"Tu don",invit:"Tu invitación",talento:"Tu talento",mundo:"Cómo te ven",cuidado:"Lo que debes cuidar",deseo:"Lo que tu corazón pide",herida:"Tu herida",abrazo:"Lo que te abraza"};
+function motifSvg(k){
+  var G="#ffd27a",R="#ff9fd6",A="#8ee9dc",i,s="",ang,x,y;
+  var defs='<defs><radialGradient id="gG" cx="50%" cy="40%" r="65%"><stop offset="0" stop-color="#fff6d8"/><stop offset=".55" stop-color="#ffd27a"/><stop offset="1" stop-color="#e8903f"/></radialGradient></defs>';
+  if(k==="sentir"){
+    for(i=0;i<3;i++) s+='<circle class="m-wave" style="--d:'+(i*0.9)+'s" cx="100" cy="100" r="30" fill="none" stroke="'+R+'" stroke-width="1.4"/>';
+    s+='<path class="m-pulse" d="M100 128 C70 104 72 74 90 74 C96 74 100 79 100 83 C100 79 104 74 110 74 C128 74 130 104 100 128Z" fill="url(#gG)"/>';
+  } else if(k==="sombra"){
+    s+='<circle class="m-halo" cx="100" cy="100" r="46" fill="none" stroke="'+G+'" stroke-width="1.6"/><mask id="mE" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200"><rect width="200" height="200" fill="#fff"/><circle class="m-eclipse" cx="100" cy="100" r="41" fill="#000"/></mask><circle cx="100" cy="100" r="40" fill="url(#gG)" mask="url(#mE)"/>';
+    for(i=0;i<7;i++){ ang=i*51+12; x=100+Math.cos(ang)*76; y=100+Math.sin(ang)*76; s+='<circle class="m-tw" style="--d:'+(i*.4)+'s" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="1.8" fill="#fff"/>'; }
+  } else if(k==="don"){
+    for(i=0;i<8;i++) s+='<g transform="rotate('+(i*45)+' 100 100)"><ellipse class="m-petal" style="--d:'+(0.3+i*0.18)+'s" cx="100" cy="66" rx="12" ry="30" fill="'+(i%2?R:G)+'" fill-opacity=".85"/></g>';
+    s+='<circle class="m-seed" cx="100" cy="100" r="15" fill="url(#gG)"/>';
+  } else if(k==="invit"){
+    var P=[[56,160],[78,138],[108,122],[92,96],[116,76]];
+    s+='<path class="m-draw" pathLength="1" d="M56 160 Q70 130 108 122 Q80 108 92 96 Q104 90 116 76 L134 42" fill="none" stroke="'+A+'" stroke-width="1.4" stroke-dasharray="1" style="--d:.2s"/>';
+    for(i=0;i<P.length;i++) s+='<circle class="m-stone" style="--d:'+(0.4+i*0.5)+'s" cx="'+P[i][0]+'" cy="'+P[i][1]+'" r="7" fill="'+A+'" fill-opacity=".85"/>';
+    s+='<path class="m-star" style="--d:3s" d="M134 22 L139 38 L156 42 L139 46 L134 62 L129 46 L112 42 L129 38Z" fill="url(#gG)"/>';
+  } else if(k==="talento"){
+    var d="M100 100"; for(i=1;i<=160;i++){ var t=i/160*12.5, r=t*6.2; d+=" L"+(100+Math.cos(t)*r).toFixed(1)+" "+(100+Math.sin(t)*r).toFixed(1); }
+    s+='<path class="m-draw" pathLength="1" d="'+d+'" fill="none" stroke="'+G+'" stroke-width="2" stroke-linecap="round" stroke-dasharray="1" style="--d:.1s;--t:3.4s"/>';
+    for(i=0;i<10;i++){ ang=i*36; x=100+Math.cos(ang*0.01745)*84; y=100+Math.sin(ang*0.01745)*84; s+='<circle class="m-tw" style="--d:'+(1.5+i*.18)+'s" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="2.4" fill="'+(i%2?R:"#fff")+'"/>'; }
+    s+='<circle cx="100" cy="100" r="6" fill="url(#gG)"/>';
+  } else if(k==="mundo"){
+    for(i=0;i<6;i++){ ang=(i*60-90)*0.01745; x=100+Math.cos(ang)*68; y=100+Math.sin(ang)*68;
+      s+='<line class="m-draw" pathLength="1" x1="100" y1="100" x2="'+x.toFixed(1)+'" y2="'+y.toFixed(1)+'" stroke="'+R+'" stroke-opacity=".7" stroke-width="1.2" stroke-dasharray="1" style="--d:'+(0.3+i*0.35)+'s"/>'+
+         '<circle class="m-stone" style="--d:'+(0.8+i*0.35)+'s" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="9" fill="'+(i%2?A:R)+'" fill-opacity=".85"/>'; }
+    s+='<circle class="m-pulse" cx="100" cy="100" r="19" fill="url(#gG)"/>';
+  } else if(k==="cuidado"){
+    s+='<circle class="m-wave" style="--d:0s" cx="100" cy="92" r="26" fill="none" stroke="'+G+'" stroke-width="1.2"/><circle class="m-wave" style="--d:1.1s" cx="100" cy="92" r="26" fill="none" stroke="'+G+'" stroke-width="1.2"/>'+
+       '<path class="m-flame" d="M100 52 C118 80 128 92 128 110 A28 28 0 0 1 72 110 C72 92 84 82 100 52Z" fill="url(#gG)"/><path class="m-flame" style="--d:.2s" d="M100 86 C110 100 114 106 114 116 A14 14 0 0 1 86 116 C86 106 92 100 100 86Z" fill="#fff6d8"/>'+
+       '<path class="m-draw" pathLength="1" d="M54 134 Q100 190 146 134" fill="none" stroke="'+R+'" stroke-width="3" stroke-linecap="round" stroke-dasharray="1" style="--d:.3s"/>';
+  } else if(k==="deseo"){
+    s+='<path class="m-draw" pathLength="1" d="M100 160 C40 118 46 66 80 62 C92 61 100 70 100 78 C100 70 108 61 120 62 C154 66 160 118 100 160Z" fill="none" stroke="'+G+'" stroke-width="2" stroke-linejoin="round" stroke-dasharray="1" style="--d:.2s;--t:3.2s"/>';
+    var N=[[100,160],[56,122],[52,80],[80,62],[100,78],[120,62],[148,80],[144,122]];
+    for(i=0;i<N.length;i++) s+='<circle class="m-stone" style="--d:'+(0.3+i*0.4)+'s" cx="'+N[i][0]+'" cy="'+N[i][1]+'" r="3.4" fill="#fff"/>';
+    s+='<circle class="m-pulse" cx="100" cy="108" r="9" fill="url(#gG)"/>';
+  } else if(k==="herida"){
+    s+='<circle cx="100" cy="100" r="58" fill="rgba(255,255,255,.07)" stroke="'+R+'" stroke-opacity=".7" stroke-width="1.4"/>'+
+       '<path d="M100 42 L92 70 L108 92 L94 118 L106 140 L100 158" fill="none" stroke="#2b1458" stroke-width="3" stroke-linejoin="round"/>'+
+       '<path class="m-draw m-glow" pathLength="1" d="M100 42 L92 70 L108 92 L94 118 L106 140 L100 158" fill="none" stroke="'+G+'" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="1" style="--d:.6s;--t:3.2s"/>';
+  } else if(k==="abrazo"){
+    s+='<path class="m-draw" pathLength="1" d="M72 46 A62 62 0 0 0 72 154" fill="none" stroke="'+R+'" stroke-width="3" stroke-linecap="round" stroke-dasharray="1" style="--d:.2s;--t:2.4s"/>'+
+       '<path class="m-draw" pathLength="1" d="M128 46 A62 62 0 0 1 128 154" fill="none" stroke="'+G+'" stroke-width="3" stroke-linecap="round" stroke-dasharray="1" style="--d:.8s;--t:2.4s"/>'+
+       '<circle class="m-wave" style="--d:1.6s" cx="100" cy="100" r="16" fill="none" stroke="'+G+'" stroke-width="1.2"/><circle class="m-pulse" style="--d:1.2s" cx="100" cy="100" r="16" fill="url(#gG)"/>';
+  }
+  return '<svg class="m-svg" viewBox="0 0 200 200" aria-hidden="true">'+defs+s+'</svg>';
+}
+function sceneMotif(kind,n,label){
+  return '<div class="motif"><div class="mchip">'+esc(label)+' · <b>'+n+'</b></div>'+motifSvg(kind)+'<div class="mlabel">'+esc(MOTIF_TXT[kind])+'</div></div>';
+}
+function buildBeats(name, o, r){
+  var first=name.split(" ")[0], B=[], c=chapterText("camino",r.camino,name), e=chapterText("expresion",r.expresion,name), a=chapterText("alma",r.alma,name);
+  B.push({scene:sceneName(first), say:first+", gracias por estar aquí."});
+  B.push({scene:sceneRipple(first), hold:2800, say:"Antes de empezar, te pido algo sencillo. Di tu nombre en voz baja, una sola vez. "+first+". Siente cómo suena en ti."});
+  B.push({scene:sceneFullName(name), say:"Es el sonido que más veces has escuchado en tu vida. "+name+". Alguien lo eligió para ti, y desde entonces te acompaña."});
+  B.push({scene:sceneSame(first,o), hold:1200, say:"Piensa en esto. En algún lugar del mundo, otra persona nació el mismo día que tú. Con tu misma fecha. Pero se llama distinto."});
+  B.push({say:"Y por eso su historia no es la tuya. La fecha marca el camino, pero es tu nombre el que le da voz."});
+  B.push({scene:sceneBirth(o), say:"Empecemos por tu fecha. Sumamos el día, el mes y el año, y los reducimos, despacio, hasta un solo número."});
+  B.push({scene:sceneReveal(r.camino,"Camino de vida"), burst:true, say:c[0]});
+  B.push({scene:sceneMotif("sentir",r.camino,"Camino de vida"), say:c[1]}); B.push({scene:sceneMotif("sombra",r.camino,"Camino de vida"), say:c[2]}); B.push({scene:sceneMotif("don",r.camino,"Camino de vida"), burst:true, say:c[3]}); B.push({scene:sceneMotif("invit",r.camino,"Camino de vida"), say:c[4]});
+  B.push({scene:sceneLetters(name,"all"), say:first+", ahora vamos a tu nombre completo. Cada letra vale un número, del uno al nueve, y juntas dicen cómo te muestras al mundo."});
+  B.push({scene:sceneReveal(r.expresion,"Expresión"), burst:true, say:e[0]});
+  B.push({scene:sceneMotif("talento",r.expresion,"Expresión"), say:e[1]}); B.push({scene:sceneMotif("mundo",r.expresion,"Expresión"), say:e[2]}); B.push({scene:sceneMotif("cuidado",r.expresion,"Expresión"), say:e[3]});
+  B.push({scene:sceneLetters(name,"vowels"), say:"Ahora, solo las vocales de tu nombre. Son la voz de tu interior, la parte que casi nadie escucha."});
+  B.push({scene:sceneReveal(r.alma,"Alma"), burst:true, say:a[0]});
+  B.push({scene:sceneMotif("deseo",r.alma,"Alma"), say:a[1]}); B.push({scene:sceneMotif("herida",r.alma,"Alma"), say:a[2]}); B.push({scene:sceneMotif("abrazo",r.alma,"Alma"), burst:true, say:a[3]});
+  B.push({scene:sceneRest(), say:first+", aún quedan dos números por descubrir: tu personalidad y tu día de nacimiento. Y el cruce de los cinco, que une todo lo que acabas de escuchar."});
+  B.push({say:"Esa parte se lee mejor despacio, en una sesión, con alguien que te acompañe. Respira. Y cuando quieras, tu informe te espera aquí abajo."});
+  return B;
+}
+
+/* ============ Reproductor: un reloj por frase, voz opcional ============ */
+var S={beats:[],i:-1,token:0,voice:true,paused:false,chunks:[],timers:[],name:"",nameSet:{},data:null};
+function clearTimers(){ S.timers.forEach(clearTimeout); S.timers=[]; }
+function later(fn,ms){ var t=setTimeout(fn,ms); S.timers.push(t); return t; }
+function speechOK(){ return "speechSynthesis" in window && typeof SpeechSynthesisUtterance!=="undefined"; }
+function pickVoice(){ var vs=(speechSynthesis.getVoices()||[]).filter(function(v){return /^es/i.test(v.lang);}); return vs.filter(function(v){return /es[-_](CO|MX|419|US|AR)/i.test(v.lang);})[0]||vs[0]||null; }
+
+function renderCaption(text){
+  var parts=text.split(/(\s+)/), pos=0, html="", starts=[], chunks=[], c=0, cnt=0;
+  parts.forEach(function(p){
+    if(!p) return;
+    if(/^\s+$/.test(p)){ html+=" "; pos+=p.length; return; }
+    var clean=normalize(p).toLowerCase(), isName=clean.length>=2 && S.nameSet[clean];
+    html+='<span class="w'+(isName?' name':'')+'">'+esc(p)+'</span>';
+    starts.push(pos); chunks.push(c); pos+=p.length; cnt++;
+    if(/[.,;:!?…]$/.test(p) || cnt>=5){ c++; cnt=0; }
+  });
+  $("caption").innerHTML='<span class="cap-in">'+html+'</span>';
+  S.chunks=chunks; markWord(-1);
+  return starts;
+}
+function markWord(idx){
+  var ws=$("caption").querySelectorAll(".w"); if(!ws.length) return;
+  var cur=S.chunks[Math.min(Math.max(idx,0),S.chunks.length-1)];
+  for(var k=0;k<ws.length;k++){ var w=ws[k];
+    w.classList.toggle("show",S.chunks[k]===cur); w.classList.toggle("done",k<idx); w.classList.toggle("now",k===idx); }
+}
+function markAll(){ markWord($("caption").querySelectorAll(".w").length); }
+
+function playBeat(i){
+  if(i>=S.beats.length) return finish();
+  clearTimers(); var tk=++S.token; S.i=i;
+  var b=S.beats[i];
+  if(b.scene){ setScene(b.scene); if(b.burst) later(function(){ Sky.burst(); }, 1000); }
+  var starts=renderCaption(b.say), n=starts.length, per=60000/WPM, est=n*per+700, boundary=false, done=false;
+  setProg(i/S.beats.length);
+  function next(){ if(done||tk!==S.token) return; done=true; clearTimers(); markAll(); later(function(){ if(tk===S.token) playBeat(i+1); }, 1100+(b.hold||0)); }
+  for(var k=0;k<n;k++) (function(k){ later(function(){ if(!boundary && tk===S.token) markWord(k); }, 250+k*per); })(k);
+  if(S.voice && speechOK()){
+    try{
+      speechSynthesis.cancel();
+      var u=new SpeechSynthesisUtterance(b.say); u.lang="es-ES"; u.rate=.8; u.pitch=.96; var v=pickVoice(); if(v) u.voice=v;
+      u.onboundary=function(ev){ if(tk!==S.token||(ev.name&&ev.name!=="word")) return; boundary=true;
+        var idx=0; for(var k=0;k<starts.length;k++){ if(starts[k]<=ev.charIndex) idx=k; } markWord(idx); };
+      u.onend=next; u.onerror=function(){ later(next, est); };
+      speechSynthesis.speak(u);
+      later(next, est*2.2+4000);
+      return;
+    }catch(e){}
+  }
+  later(next, est);
+}
+function finish(){
+  clearTimers(); S.token++; if(speechOK()) speechSynthesis.cancel();
+  setProg(1); $("controls").hidden=true;
+  $("v-read").hidden=false; Sky.start();
+  setTimeout(function(){ $("v-read").scrollIntoView({behavior:REDUCED?"auto":"smooth",block:"start"}); },150);
+}
+function startCinema(){
+  $("v-start").hidden=true; $("v-stage").hidden=false; $("v-read").hidden=true; $("controls").hidden=false; setProg(0);
+  window.scrollTo(0,0); Sky.start();
+  S.voice=true; S.paused=false; setMuteUi(); setPlayUi(); playBeat(0);   // se llama dentro del gesto del usuario para que el audio se permita
+}
+var IC={
+  play:'<svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.4-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.4"/><rect x="13.5" y="5" width="4" height="14" rx="1.4"/></svg>',
+  vol:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a8 8 0 0 1 0 11"/></svg>',
+  mute:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>',
+  rep:'<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6L20 8.5"/><path d="M20 4v4.5h-4.5"/><path d="M20 12a8 8 0 0 1-13.7 5.6L4 15.5"/><path d="M4 20v-4.5h4.5"/></svg>'
+};
+$("rep").innerHTML=IC.rep;
+function setProg(f){ $("pgfg").style.strokeDashoffset=String((232.5*(1-Math.max(0,Math.min(1,f)))).toFixed(1)); }
+function setMuteUi(){ var b=$("mute"); b.innerHTML=S.voice?IC.vol:IC.mute; b.setAttribute("aria-pressed",String(!S.voice)); b.setAttribute("aria-label",S.voice?"Silenciar la voz":"Activar la voz"); }
+function setPlayUi(){ $("pp-ico").innerHTML=S.paused?IC.play:IC.pause; $("pp").setAttribute("aria-label",S.paused?"Reanudar la lectura":"Pausar la lectura"); }
+$("pp").addEventListener("click", function(){
+  if(S.paused){ S.paused=false; setPlayUi(); playBeat(S.i); }
+  else{ S.paused=true; setPlayUi(); clearTimers(); S.token++; if(speechOK()) speechSynthesis.cancel(); }
+});
+$("mute").addEventListener("click", function(){
+  S.voice=!S.voice; setMuteUi(); if(speechOK()) speechSynthesis.cancel();
+  if(!S.paused) playBeat(S.i);
+});
+$("rep").addEventListener("click", function(){ S.paused=false; setPlayUi(); if(speechOK()) speechSynthesis.cancel(); playBeat(S.i); });
+$("replay").addEventListener("click", function(){ startCinema(); });
+$("again").addEventListener("click", function(){
+  clearTimers(); S.token++; if(speechOK()) speechSynthesis.cancel(); Sky.stop();
+  $("v-stage").hidden=true; $("v-read").hidden=true; $("v-start").hidden=false; window.scrollTo(0,0);
+});
+
+/* ============ Informe y oferta ============ */
+function ringHtml(n,cls){ return '<div class="ring '+(cls||"")+'" aria-hidden="true">'+n+'</div>'; }
+function renderReport(name, r){
+  var first=name.split(" ")[0];
+  $("r-name").textContent=first; $("o-name").textContent=first;
+  var labels=[["Camino de vida",r.camino],["Expresión",r.expresion],["Alma",r.alma],["Personalidad",null],["Día de nacimiento",null]];
+  $("tracker").innerHTML=labels.map(function(l){
+    return '<div>'+(l[1]!==null?ringHtml(l[1]):'<div class="ring soft" aria-hidden="true">?</div>')+'<span>'+l[0]+'</span></div>';
+  }).join("");
+  var open=[["camino","Capítulo 1","Tu camino de vida",r.camino],["expresion","Capítulo 2","Tu expresión",r.expresion],["alma","Capítulo 3","Tu alma",r.alma]];
+  var nameRe=new RegExp("(^|[^A-Za-zÀ-ÿ])("+esc(first).replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")(?![A-Za-zÀ-ÿ])","g");
+  var html=open.map(function(c){
+    var paras=chapterText(c[0],c[3],name).map(function(p){ return esc(p).replace(nameRe,'$1<span class="nm">$2</span>'); });
+    return '<article class="chapter"><header>'+ringHtml(c[3],"sm")+'<div><p class="eyebrow">'+c[1]+'</p><h3>'+c[2]+'</h3></div></header><div class="body">'+
+      paras.map(function(p){return '<p>'+p+'</p>';}).join("")+'</div></article>';
+  }).join("");
+  function rest(cap,title,txt){
+    return '<article class="chapter"><header><div class="ring sm soft" aria-hidden="true">?</div><div><p class="eyebrow">'+cap+'</p><h3>'+title+'</h3></div></header>'+
+      '<p class="muted">'+txt+'</p><p class="lockrow">Se lee mejor en tu sesión</p></article>';
+  }
+  html+=rest("Capítulo 4","Tu personalidad","Cómo te perciben los demás en los primeros cinco minutos, y por qué a veces no coincide con lo que sientes.");
+  html+=rest("Capítulo 5","Tu día y el cruce de los cinco","El talento que trajiste desde el día en que naciste, y cómo se combina con tus otros cuatro números.");
+  $("chapters").innerHTML=html;
+  LAST_REPORT={first:first,camino:r.camino,expresion:r.expresion,alma:r.alma};
+  buildCta();
+}
+function buildCta(){
+  var a=$("cta"), note=$("cta-note"), R=LAST_REPORT;
+  var msg="Hola Stella, soy "+R.first+". Hice mi lectura numerológica: camino de vida "+R.camino+", expresión "+R.expresion+", alma "+R.alma+
+    ". Quiero entender qué significa para mi momento actual y saber cómo son tus sesiones.";
+  if(WHATSAPP_NUMBER){
+    a.href="https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent(msg); note.hidden=true; a.onclick=null;
+  }else{
+    a.href="#offer";
+    a.onclick=function(e){ e.preventDefault(); note.hidden=false;
+      note.textContent="Falta el número de WhatsApp: escríbelo en la variable WHATSAPP_NUMBER al inicio del script."; };
+  }
+}
+
+/* ============ Selectores de fecha ============ */
+var MESES=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+function opt(v,t){ var o=document.createElement("option"); o.value=v; o.textContent=t; return o; }
+(function fillDates(){
+  var d=$("f-dia"), m=$("f-mes"), a=$("f-anio");
+  m.appendChild(opt("","Mes")); MESES.forEach(function(n,i){ m.appendChild(opt(i+1,n)); });
+  function digits(el){ el.addEventListener("input", function(){ el.value=el.value.replace(/\D/g,""); }); }
+  digits(d); digits(a);
+  d.addEventListener("input", function(){ if(d.value.length===2 || (d.value.length===1 && +d.value>3)) m.focus(); });
+  m.addEventListener("change", function(){ a.focus(); });
+  a.addEventListener("input", function(){ if(a.value.length===4) a.blur(); });
+})();
+function readDate(){ var d=$("f-dia").value, m=$("f-mes").value, a=$("f-anio").value; return (d&&m&&a.length===4)?{y:+a,m:+m,d:+d}:null; }
+function setDate(f){ $("f-dia").value=f.d; $("f-mes").value=f.m; $("f-anio").value=f.y; }
+function parseDate(s){
+  if(!s) return null; s=String(s).trim(); var m;
+  if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/))) return {y:+m[1],m:+m[2],d:+m[3]};
+  if((m=s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})$/))) return {y:+m[3],m:+m[2],d:+m[1]};
+  return null;
+}
+function validDate(o){
+  if(!o) return false; var dt=new Date(o.y,o.m-1,o.d);
+  return dt.getFullYear()===o.y && dt.getMonth()===o.m-1 && dt.getDate()===o.d && o.y>=1900 && dt<=new Date();
+}
+
+/* ============ Envío ============ */
+$("form").addEventListener("submit", function(e){
+  e.preventDefault();
+  var name=$("nombre").value.trim().replace(/\s+/g," "), o=readDate();
+  if(normalize(name).length<2){ $("err").textContent="Escribe tu nombre completo."; return; }
+  if(!validDate(o)){ $("err").textContent="Revisa tu fecha de nacimiento: día, mes y año de 4 cifras (por ejemplo 1987)."; return; }
+  $("err").textContent="";
+  var r=compute(name,o.y,o.m,o.d);
+  S.name=name; S.nameSet={}; name.split(" ").forEach(function(w){ var c=normalize(w).toLowerCase(); if(c.length>=2) S.nameSet[c]=true; });
+  S.beats=buildBeats(name,o,r);
+  renderReport(name,r);
+  startCinema();
+});
+
+/* Si el anuncio trae ?nombre= y ?fecha=, se rellenan los campos (la lectura empieza con un toque, porque el audio lo exige) */
+(function(){
+  try{
+    var q=new URLSearchParams(location.search), n=q.get("nombre"), f=parseDate(q.get("fecha"));
+    if(n) $("nombre").value=n;
+    if(f && validDate(f)) setDate(f);
+  }catch(e){}
+})();
+</script>
