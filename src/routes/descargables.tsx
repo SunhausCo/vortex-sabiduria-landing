@@ -9,8 +9,10 @@ import {
   ArrowLeft,
   MessageCircle,
   CheckCircle2,
+  Moon,
 } from "lucide-react";
 import heroImg from "@/assets/guia-hero.jpg";
+import portalImg from "@/assets/portal-1111-portada.jpg";
 
 export const Route = createFileRoute("/descargables")({
   component: DescargablesPage,
@@ -20,7 +22,7 @@ export const Route = createFileRoute("/descargables")({
       {
         name: "description",
         content:
-          "Descarga gratis la guía introductoria a las Constelaciones Familiares por Stella Cante Molina. Recursos gratuitos para comprender patrones familiares y bienestar emocional.",
+          "Descarga gratis la guía introductoria a las Constelaciones Familiares y el ritual Portal 11:11 de manifestación, por Stella Cante Molina. Recursos gratuitos para tu bienestar emocional.",
       },
       { name: "keywords", content: "constelaciones familiares Bogotá, guía gratuita, tarot terapéutico, terapia sistémica, patrones familiares, sanación emocional, recursos gratuitos, Vórtex de Sabiduría" },
       { property: "og:title", content: "¿Por qué repito la misma historia? — Guía gratuita" },
@@ -51,6 +53,10 @@ export const Route = createFileRoute("/descargables")({
 });
 
 const PDF_URL = "/guia-constelaciones-familiares.pdf";
+const PORTAL_PDF = "/portal-1111-ritual-de-manifestacion.pdf";
+const PORTAL_WHATSAPP =
+  "https://wa.me/573134385783?text=" +
+  encodeURIComponent("Hola Stella, hice el ritual Portal 11:11 y me gustaría acompañar mi intención con una sesión ✨");
 const WHATSAPP_LINK =
   "https://wa.me/573134385783?text=" +
   encodeURIComponent("Hola Stella, descargué la guía y me gustaría agendar una sesión 🌿");
@@ -79,7 +85,9 @@ function DescargablesPage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--cream)", color: "var(--plum)" }}>
       <TopBar />
+      <PortalBanner />
       <Hero />
+      <PortalSection />
       <Preview />
       <Inside />
       <Author />
@@ -180,6 +188,138 @@ function Hero() {
             </div>
           </div>
           <div className="pointer-events-none absolute -bottom-4 -right-4 h-24 w-24 border" style={{ borderColor: "var(--peach)" }} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Portal 11:11 ---------- */
+const GOLD = "#d8b46a";
+const GOLD_LIGHT = "#f2dca0";
+
+function PortalBanner() {
+  return (
+    <a
+      href="#portal-1111"
+      className="block px-6 py-2.5 text-center text-[11px] tracking-[0.3em] transition hover:opacity-90"
+      style={{ background: "#0a0f2c", color: GOLD_LIGHT }}
+    >
+      ✦ NUEVO · RITUAL PORTAL 11:11 — DESCÁRGALO GRATIS ↓
+    </a>
+  );
+}
+
+function PortalSection() {
+  const points = [
+    "12 páginas A4, listas para imprimir o usar en pantalla",
+    "Ritual guiado para hacerlo a las 11:11",
+    "Soltar, definir tu deseo, visualizar y declarar",
+    "Espacios amplios para escribir a mano",
+  ];
+  return (
+    <section id="portal-1111" className="relative overflow-hidden" style={{ background: "linear-gradient(180deg,#070a22 0%,#0d1340 100%)", color: "#f6f0e2" }}>
+      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 px-6 py-24 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-20">
+        <div className="reveal relative mx-auto w-full max-w-[340px]">
+          <img
+            src={portalImg}
+            alt="Portada de la guía Portal 11:11, ritual de manifestación de Vortex de Sabiduría"
+            width={909}
+            height={1286}
+            loading="lazy"
+            className="w-full shadow-2xl"
+            style={{ boxShadow: "0 30px 80px rgba(216,180,106,0.18)" }}
+          />
+          <div className="pointer-events-none absolute -bottom-4 -right-4 h-24 w-24 border" style={{ borderColor: GOLD }} />
+        </div>
+
+        <div className="reveal">
+          <span className="inline-flex items-center gap-2 text-[11px] tracking-[0.4em]" style={{ color: GOLD }}>
+            <Moon className="h-3.5 w-3.5" />
+            DESCARGABLE · RITUAL 11 DE NOVIEMBRE
+          </span>
+          <h2 className="mt-5 font-serif text-5xl leading-[1.05] md:text-6xl">
+            Portal <em className="italic" style={{ color: GOLD_LIGHT }}>11:11</em>
+          </h2>
+          <p className="mt-3 text-xs tracking-[0.4em]" style={{ color: GOLD }}>RITUAL DE MANIFESTACIÓN</p>
+          <div className="mt-6 h-px w-16" style={{ background: GOLD }} />
+          <p className="mt-6 font-serif text-xl italic leading-relaxed" style={{ color: GOLD_LIGHT }}>
+            Escribe. Visualiza. Siente. Declara.
+          </p>
+          <p className="mt-4 max-w-md leading-relaxed" style={{ color: "rgba(246,240,226,0.82)" }}>
+            Un ritual para declarar la realidad que estás por crear. Haz una pausa
+            consciente, suelta lo que ya cumplió su ciclo y elige hacia dónde
+            quieres dirigir tu energía.
+          </p>
+
+          <ul className="mt-8 space-y-3 text-[15px]">
+            {points.map((t) => (
+              <li key={t} className="flex items-start gap-3">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" style={{ color: GOLD }} />
+                <span style={{ color: "rgba(246,240,226,0.9)" }}>{t}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-10 flex flex-wrap gap-3">
+            <a
+              href={PORTAL_PDF}
+              download
+              className="group inline-flex items-center gap-3 px-8 py-4 text-sm tracking-[0.25em] transition hover:scale-[1.02]"
+              style={{ background: GOLD, color: "#0a0f2c" }}
+            >
+              <Download className="h-4 w-4 transition group-hover:translate-y-0.5" />
+              DESCARGAR RITUAL
+            </a>
+            <a
+              href={PORTAL_PDF}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-2 px-6 py-4 text-sm tracking-[0.2em] transition hover:opacity-70"
+              style={{ color: GOLD_LIGHT }}
+            >
+              <BookOpen className="h-4 w-4" />
+              VER ANTES
+            </a>
+          </div>
+          <p className="mt-4 text-xs" style={{ color: "rgba(246,240,226,0.6)" }}>
+            Formato PDF · 12 páginas · Descarga inmediata · Sin registro
+          </p>
+        </div>
+      </div>
+
+      {/* Llamado a la acción */}
+      <div className="border-t" style={{ borderColor: "rgba(216,180,106,0.25)" }}>
+        <div className="reveal mx-auto max-w-3xl px-6 py-20 text-center">
+          <span className="text-[11px] tracking-[0.4em]" style={{ color: GOLD }}>DESPUÉS DEL RITUAL</span>
+          <h3 className="mt-4 font-serif text-3xl leading-tight md:text-4xl">
+            Tu intención merece <em className="italic" style={{ color: GOLD_LIGHT }}>raíces</em>
+          </h3>
+          <p className="mx-auto mt-5 max-w-xl leading-relaxed" style={{ color: "rgba(246,240,226,0.82)" }}>
+            Escribir es el primer paso. Si quieres sostener lo que declaraste
+            con acompañamiento, Stella puede guiarte en una sesión personal,
+            virtual o presencial.
+          </p>
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <a
+              href={PORTAL_WHATSAPP}
+              target="_blank"
+              rel="noopener"
+              className="inline-flex items-center gap-3 px-8 py-4 text-sm tracking-[0.25em] transition hover:scale-[1.02]"
+              style={{ background: GOLD, color: "#0a0f2c" }}
+            >
+              <MessageCircle className="h-4 w-4" />
+              AGENDAR MI SESIÓN
+            </a>
+            <a
+              href="/numerologia.html"
+              className="inline-flex items-center gap-3 border px-8 py-4 text-sm tracking-[0.25em] transition hover:opacity-70"
+              style={{ borderColor: GOLD, color: GOLD_LIGHT }}
+            >
+              <Sparkles className="h-4 w-4" />
+              MI LECTURA NUMEROLÓGICA
+            </a>
+          </div>
         </div>
       </div>
     </section>
