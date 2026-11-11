@@ -54,6 +54,7 @@ export const Route = createFileRoute("/descargables")({
 
 const PDF_URL = "/guia-constelaciones-familiares.pdf";
 const PORTAL_PDF = "/portal-1111-ritual-de-manifestacion.pdf";
+const PORTAL_PDF_PRINT = "/portal-1111-ritual-de-manifestacion-imprimir.pdf";
 const PORTAL_WHATSAPP =
   "https://wa.me/573134385783?text=" +
   encodeURIComponent("Hola Stella, hice el ritual Portal 11:11 y me gustaría acompañar mi intención con una sesión ✨");
@@ -282,7 +283,19 @@ function PortalSection() {
               VER ANTES
             </a>
           </div>
-          <p className="mt-4 text-xs" style={{ color: "rgba(246,240,226,0.6)" }}>
+          <p className="mt-5 text-sm" style={{ color: "rgba(246,240,226,0.82)" }}>
+            ¿Vas a imprimirlo?{" "}
+            <a
+              href={PORTAL_PDF_PRINT}
+              download
+              className="underline underline-offset-4 transition hover:opacity-80"
+              style={{ color: GOLD_LIGHT }}
+            >
+              Descarga la versión para imprimir
+            </a>{" "}
+            (fondo claro, ahorra tinta).
+          </p>
+          <p className="mt-3 text-xs" style={{ color: "rgba(246,240,226,0.6)" }}>
             Formato PDF · 12 páginas · Descarga inmediata · Sin registro
           </p>
         </div>
