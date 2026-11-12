@@ -89,6 +89,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bb25ff7c-bc4b-4a19-b54c-856b22be2344/id-preview-d0e04a11--f8dbbc78-0ab9-4aec-acd4-0331c052d516.lovable.app-1783360116081.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/bb25ff7c-bc4b-4a19-b54c-856b22be2344/id-preview-d0e04a11--f8dbbc78-0ab9-4aec-acd4-0331c052d516.lovable.app-1783360116081.png" },
     ],
+    scripts: [
+      // Vercel Web Analytics (solo cuenta visitas si está activado en el proyecto de Vercel).
+      { children: "window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};" },
+      { src: "/_vercel/insights/script.js", defer: true },
+    ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
