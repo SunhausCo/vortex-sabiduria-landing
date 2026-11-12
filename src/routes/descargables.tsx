@@ -53,8 +53,10 @@ export const Route = createFileRoute("/descargables")({
 });
 
 const PDF_URL = "/guia-constelaciones-familiares.pdf";
+// Las descargas pasan por una página de gracias: cada visita a esa página cuenta como una descarga.
 const PORTAL_PDF = "/portal-1111-ritual-de-manifestacion.pdf";
-const PORTAL_PDF_PRINT = "/portal-1111-ritual-de-manifestacion-imprimir.pdf";
+const PORTAL_DOWNLOAD = "/gracias-portal-1111";
+const PORTAL_DOWNLOAD_PRINT = "/gracias-portal-1111?v=imprimir";
 const PORTAL_WHATSAPP =
   "https://wa.me/573134385783?text=" +
   encodeURIComponent("Hola Stella, hice el ritual Portal 11:11 y me gustaría acompañar mi intención con una sesión ✨");
@@ -264,8 +266,7 @@ function PortalSection() {
 
           <div className="mt-10 flex flex-wrap gap-3">
             <a
-              href={PORTAL_PDF}
-              download
+              href={PORTAL_DOWNLOAD}
               className="group inline-flex items-center gap-3 px-8 py-4 text-sm tracking-[0.25em] transition hover:scale-[1.02]"
               style={{ background: GOLD, color: "#0a0f2c" }}
             >
@@ -286,8 +287,7 @@ function PortalSection() {
           <p className="mt-5 text-sm" style={{ color: "rgba(246,240,226,0.82)" }}>
             ¿Vas a imprimirlo?{" "}
             <a
-              href={PORTAL_PDF_PRINT}
-              download
+              href={PORTAL_DOWNLOAD_PRINT}
               className="underline underline-offset-4 transition hover:opacity-80"
               style={{ color: GOLD_LIGHT }}
             >
